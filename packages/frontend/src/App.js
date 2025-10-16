@@ -13,7 +13,6 @@ function App() {
         <Route path="/" element={<CreateExamMain />} />
         <Route path="/export-exam/:id" element={<ExportExam />} />
         <Route path="/edit-exam/:examId" element={<EditExam />} />
-        {/* <Route path="/edit-exam" element={<EditExam  />} /> */}
       </Routes>
     </Router>
 
