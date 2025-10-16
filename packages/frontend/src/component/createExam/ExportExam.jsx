@@ -1,6 +1,6 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import html2pdf from "html2pdf.js";
-import { useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Typography,
@@ -11,26 +11,31 @@ import {
   MenuItem,
 } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import axios from "axios";
-
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api"; // כתובת השרת
+import { getExamService } from "../../services/Exam.services";
 
 const ExportExam = () => {
+  const navigate = useNavigate();
   const ref = useRef();
-  // const location = useLocation();
-  // const exam = location.state?.exam || {};
   const { id } = useParams(); // id של המבחן מה-URL
+  console.log(id);
+  
   const [exam, setExam] = useState("");
   const [view, setView] = useState("student"); // student | teacher
   const [anchorEl, setAnchorEl] = useState(null); // תפריט
 
   useEffect(() => {
-    // Fetch exam data from API
-    axios
-      .get(`${BASE_URL}/exams/get-exams/${id}`)
-      .then((res) => setExam(res.data))
-      .catch((err) => console.error("Error loading exam:", err))
-  }, []);
+    const fetchExam = async () => {
+      try {
+        const res = await getExamService(id);
+        setExam(res.data);
+      } catch (err) {
+        console.error("Error loading exam:", err);
+      }
+    };
+
+    fetchExam();
+  }, [id]);
+
 
 
   // יצירת PDF
@@ -87,7 +92,12 @@ const ExportExam = () => {
         direction: "rtl"
       }}
     >
-      {/* כותרת */}
+      <Button
+        variant="text"
+        onClick={() => navigate(-1)}
+        sx={{ px: 3, py: 1.5, fontSize: "16px"}}
+      > → </Button>
+            {/* כותרת */}
       <Typography
         variant="h4"
         align="center"

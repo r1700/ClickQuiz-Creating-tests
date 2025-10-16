@@ -37,6 +37,7 @@
     "jspdf-autotable": "^5.0.2",
     "mongodb": "^6.20.0",
     "pdfmake": "^0.2.20",
-    "react-router-dom": "^7.9.3"
+    "react-router-dom": "^7.9.3",
+    "stylis-plugin-rtl": "^2.1.1"
   }
 }

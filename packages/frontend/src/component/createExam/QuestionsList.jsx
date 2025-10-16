@@ -16,11 +16,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import axios from "axios";
-import ExportExam from "./ExportExam";
+import { addQuestionService, deleteQuestionService, updateQuestionService } from "../../services/question.services";
 
-
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api"; // כתובת השרת
 
 export default function QuestionsList({ exam }) {
   const navigate = useNavigate();
@@ -54,11 +51,9 @@ export default function QuestionsList({ exam }) {
   const saveQuestion = async (idx) => {
     try {
       const q = questions[idx];
+      const examId = exam._id;
       // קריאת PUT לשרת לשמירת השינויים
-      await axios.put(
-        `${BASE_URL}/exams/${exam._id}/questions/${q._id}`,
-        q
-      );
+      await updateQuestionService(examId, q);
       // לאחר שמירה - יוצא ממצב עריכה
       toggleEdit(idx);
     } catch (err) {
@@ -78,10 +73,8 @@ export default function QuestionsList({ exam }) {
       };
 
       // קריאה לשרת ליצירת השאלה במסד הנתונים
-      const res = await axios.post(
-        `${BASE_URL}/exams/${exam._id}/questions`,
-        newQuestion
-      );
+      const examId = exam._id;
+      const res = await addQuestionService(examId, newQuestion);
       console.log(" New question added:", res.data);
 
       // הוספה של השאלה החדשה ל-state עם הנתונים מהשרת (כולל _id)
@@ -98,9 +91,8 @@ export default function QuestionsList({ exam }) {
       const q = questions[idx];
       if (q._id) {
         // קריאה לשרת למחיקת השאלה
-        await axios.delete(
-          `${BASE_URL}/exams/${exam._id}/questions/${q._id}`
-        );
+        await deleteQuestionService(exam._id, q._id);
+      
       }
 
       // הסרה מ־state המקומי
@@ -127,26 +119,7 @@ export default function QuestionsList({ exam }) {
         שאלות המבחן
       </Typography>
 
-      {/* כפתורים להוספת שאלות */}
-      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={() => addQuestion("open")}
-          fullWidth
-        >
-          הוספת שאלה פתוחה
-        </Button>
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={() => addQuestion("mcq")}
-          fullWidth
-        >
-          הוספת שאלה עם אפשרויות בחירה
-        </Button>
-      </Box>
-
+     
       {/* מעבר על כל השאלות */}
       {questions.map((q, idx) => (
         <Accordion key={q._id || idx} sx={{ mb: 1 }}>
@@ -242,6 +215,26 @@ export default function QuestionsList({ exam }) {
         </Accordion>
 
       ))}
+       {/* כפתורים להוספת שאלות */}
+      <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<AddIcon />}
+          onClick={() => addQuestion("open")}
+          fullWidth
+        >
+          הוספת שאלה פתוחה
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<AddIcon />}
+          onClick={() => addQuestion("mcq")}
+          fullWidth
+        >
+          הוספת שאלה עם אפשרויות בחירה
+        </Button>
+      </Box>
+
       <Button
         variant="contained"
         color="primary"
