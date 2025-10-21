@@ -1,3 +1,5 @@
+// controllers/exam.controller.js
+
 import Exam from "../models/Exam.js";
 import OpenAI from "openai";
 import dotenv from "dotenv";
@@ -15,6 +17,7 @@ export const createExam = async (req, res) => {
             classroom,
             level,
             questions: questions || [], // אם רוצים, אפשר לשלוח שאלות כבר ביצירה
+            userId: req.user.id
         });
         const savedExam = await exam.save();
         res.status(201).json(savedExam);
@@ -74,7 +77,7 @@ export const createExamAI = async (req, res) => {
         }
 
         // יצירת המבחן ושמירה במסד
-        const exam = new Exam({ title, subject, topic, level, classroom, questions, questionTypes });
+        const exam = new Exam({ title, subject, topic, level, classroom, questions, questionTypes, userId: req.user.id });
         const savedExam = await exam.save();
 
         res.status(201).json(savedExam);
@@ -83,6 +86,21 @@ export const createExamAI = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
+// ✅ שליפת כל המבחנים של משתמש
+export const getExamsForUser = async (req, res) => {
+    try {
+        if (!req.user?.id) return res.status(401).json({ message: "Unauthorized" });
+        console.log("❤️❤️❤️❤️❤️Fetching exams for user ID:", req.user.id);
+
+        const exams = await Exam.find({ userId: req.user.id }).lean();
+        console.log("Fetched exams for user:", exams);
+        res.json(exams);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
 
 // ✅ שליפת מבחן לפי ID
 export const getExamById = async (req, res) => {
@@ -100,8 +118,8 @@ export const getExamById = async (req, res) => {
         //         questions: exam.questions.map(q => ({ text: q.text, options: q.options }))
         //     };
         // } else {
-            // גרסת מורה (כולל תשובות)
-            resultExam = exam;
+        // גרסת מורה (כולל תשובות)
+        resultExam = exam;
         // }
 
         res.json(resultExam);
@@ -112,26 +130,46 @@ export const getExamById = async (req, res) => {
 }
 // ✅ עדכון מבחן קיים
 export const updateExam = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
 
-    const updatedExam = await Exam.findByIdAndUpdate(id, updateData, {
-      new: true, // מחזיר את המסמך המעודכן
-      runValidators: true, // שומר על ולידציות
-    });
+        const updatedExam = await Exam.findByIdAndUpdate(id, updateData, {
+            new: true, // מחזיר את המסמך המעודכן
+            runValidators: true, // שומר על ולידציות
+        });
 
-    if (!updatedExam) {
-      return res.status(404).json({ error: "המבחן לא נמצא לעדכון." });
+        if (!updatedExam) {
+            return res.status(404).json({ error: "המבחן לא נמצא לעדכון." });
+        }
+
+        res.status(200).json({
+            message: "✅ המבחן עודכן בהצלחה.",
+            data: updatedExam,
+        });
+    } catch (err) {
+        console.error("❌ שגיאה בעדכון מבחן:", err);
+        res.status(500).json({ error: "שגיאה בשרת בעת עדכון המבחן." });
     }
-
-    res.status(200).json({
-      message: "✅ המבחן עודכן בהצלחה.",
-      data: updatedExam,
-    });
-  } catch (err) {
-    console.error("❌ שגיאה בעדכון מבחן:", err);
-    res.status(500).json({ error: "שגיאה בשרת בעת עדכון המבחן." });
-  }
 };
+
+export const deleteExam = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedExam = await Exam.findByIdAndDelete(id);
+        if (!deletedExam) {
+            return res.status(404).json({ error: "המבחן לא נמצא למחיקה." });
+        }
+
+        res.status(200).json({
+            message: "✅ המבחן נמחק בהצלחה.",
+            data: deletedExam,
+        });
+    } catch (err) {
+        console.error("❌ שגיאה במחיקת מבחן:", err);
+        res.status(500).json({ error: "שגיאה בשרת בעת מחיקת המבחן." });
+    }
+}
+
 

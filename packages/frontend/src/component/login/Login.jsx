@@ -1,0 +1,234 @@
+// src/components/Login.jsx
+import React, { useState, useContext } from "react";
+import {
+    Box, TextField, Button, Typography, Alert, Card, CardContent, CircularProgress, Link, IconButton, InputAdornment, Divider,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { login, loginWithGoogle } from "../../services/authService";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+
+// --- רכיב עזר לשדה טקסט עם תווית מעל והודעת שגיאה ---
+const LabeledField = ({
+    label,
+    type = "text",
+    value,
+    onChange,
+    errorText,
+    InputProps,
+}) => (
+    <Box sx={{ mb: 1 }}>
+        <Typography >{label}</Typography>
+        <TextField
+            type={type}
+            value={value}
+            onChange={onChange}
+            fullWidth
+            error={!!errorText}
+            helperText={errorText}
+            InputProps={InputProps}
+            sx={{
+                "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "#d1d9ff" },
+                    "&:hover fieldset": { borderColor: "#9fa8da" },
+                },
+            }}
+        />
+    </Box>
+);
+
+export default function Login() {
+    const navigate = useNavigate();
+    const { setUser } = useContext(AuthContext);
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [errors, setErrors] = useState({});
+    const [globalErr, setGlobalErr] = useState(null);
+    const [success, setSuccess] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    // אימות טופס – החזרת אובייקט שגיאות לפי שדה
+    const validateForm = () => {
+        const errs = {};
+        if (!form.email) errs.email = "נא להזין אימייל";
+        else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = "אימייל לא תקין";
+
+        if (!form.password) errs.password = "נא להזין סיסמה";
+        else if (form.password.length < 6)
+            errs.password = "הסיסמה חייבת לכלול לפחות 6 תווים";
+
+        return errs;
+    };
+
+    const submit = async (e) => {
+        e.preventDefault();
+        setErrors({});
+        setGlobalErr(null);
+        setSuccess(null);
+
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const user = await login(form);
+            setUser(user);
+            setSuccess("התחברת בהצלחה!");
+            // setTimeout(() => navigate("/dashboard"), 800);
+            setTimeout(() => navigate("/get-my-exams"), 800);
+        } catch (e) {
+            const msg = e.response?.data?.message || "משתמשת לא קיימת";
+            setGlobalErr(msg);
+            if (msg.includes("לא קיימת")) {
+                setTimeout(() => navigate("/register"), 1500);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Box
+            sx={{
+                minHeight: "100vh",
+                bgcolor: "#f3f4f6",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                direction: "rtl",
+            }}
+        >
+            <Card sx={{ width: 380, p: 2, borderRadius: 3, boxShadow: 3 }}>
+                <CardContent>
+                    <Typography
+                        variant="h5"
+                        sx={{ fontWeight: "bold", textAlign: "center", mb: 3 }}
+                    >
+                        התחברות
+                    </Typography>
+
+                    {globalErr && (
+                        <Alert severity="error" sx={{ mb: 2 }}>
+                            {globalErr}
+                        </Alert>
+                    )}
+                    {success && (
+                        <Alert severity="success" sx={{ mb: 2 }}>
+                            {success}
+                        </Alert>
+                    )}
+
+                    <Box component="form" onSubmit={submit} noValidate>
+                        <LabeledField
+                            label="אימייל"
+                            type="email"
+                            value={form.email}
+                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            errorText={errors.email}
+                        />
+
+                        <LabeledField
+                            label="סיסמה"
+                            type={showPassword ? "text" : "password"}
+                            value={form.password}
+                            onChange={(e) => setForm({ ...form, password: e.target.value })}
+                            errorText={errors.password}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            edge="end"
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+
+                        {/* 🔹 כפתור שכחת סיסמה */}
+                        <Link
+                            underline="hover"
+                            sx={{
+                                display: "block",
+                                textAlign: "right",
+                                mb: 1.5,
+                                color: "#1976d2",
+                                fontSize: "0.9rem",
+                                cursor: "pointer",
+                            }}
+                            onClick={() => navigate("/forget-password")}
+                        >
+                            שכחת סיסמה?
+                        </Link>
+
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={loading}
+                            sx={{ py: 1.2, borderRadius: 2, mt: 1 }}
+                        >
+                            {loading ? <CircularProgress size={24} /> : "התחברות"}
+                        </Button>
+
+                        <Typography align="center" sx={{ mt: 2 }}>
+                            אין לך חשבון?{" "}
+                            <Link
+                                component="button"
+                                underline="hover"
+                                onClick={() => navigate("/register")}
+                            >
+                                להרשמה
+                            </Link>
+                        </Typography>
+
+                        {/* 🔹 Divider “או” */}
+                        <Divider
+                            sx={{
+                                my: 3,
+                                "&::before, &::after": { borderColor: "#ccc" },
+                            }}
+                        >
+                            <Typography sx={{ color: "#666", fontWeight: 500 }}>או</Typography>
+                        </Divider>
+
+                        {/* 🔹 Google Login */}
+                        <GoogleOAuthProvider clientId="964659551947-f6aulhcuivlu16pg1bv67jo47s6bmk4n.apps.googleusercontent.com">
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    const idToken = credentialResponse.credential;
+                                    try {
+                                        // שלח את ה־idToken לשרת
+                                        const res = await loginWithGoogle({ idToken });
+                                        setUser(res.user);
+                                        // navigate("/dashboard");
+                                        navigate("/get-my-exams");
+                                    } catch (err) {
+                                        console.log("Google login error:", err);
+                                        console.log("🟡 Received idToken:", idToken.slice(0, 20));
+
+
+                                        alert(err.response?.data?.message || "שגיאה בהתחברות עם Google");
+                                    }
+                                }}
+                                onError={() => {
+                                    alert("שגיאה בהתחברות עם Google");
+                                }}
+                                shape="pill"
+                                width="100%"
+                                text="signin_with"
+                            />
+                        </GoogleOAuthProvider>
+
+                    </Box>
+                </CardContent>
+            </Card>
+        </Box>
+    );
+}

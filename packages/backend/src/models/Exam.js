@@ -1,3 +1,4 @@
+// /backend/src/models/Exam.js
 import mongoose from "mongoose";
 
 const questionSchema = new mongoose.Schema({
@@ -15,7 +16,14 @@ const examSchema = new mongoose.Schema({
     classroom: String,                          // כיתה
     questions: [questionSchema],               // מערך שאלות
     createdAt: { type: Date, default: Date.now },
-    questionTypes: { type: [String], default: ["mcq", "open"] }  // mcq = multiple choice, open = שאלת כתיבה
+    questionTypes: { type: [String], default: ["mcq", "open"] },  // mcq = multiple choice, open = שאלת כתיבה
+
+  // הוספת שדה מזהה משתמש
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    }
 });
 
 const Exam = mongoose.model("Exam", examSchema);
