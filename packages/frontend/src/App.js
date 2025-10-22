@@ -1,7 +1,7 @@
 import './App.css';
 import CreateExamMain from './component/createExam/CreateExam';
 import EditExam from './component/createExam/EditExam';
-import ExportExam from './component/createExam/ExportExam';
+import ExportExam from './component/exportExem/ExportExam'
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { AuthProvider, AuthContext } from "./context/AuthContext";
 import Login from './component/login/Login';
@@ -10,6 +10,7 @@ import React from 'react';
 import ForgetPassword from './component/login/ForgetPassword';
 import ResetPassword from './component/login/resetPassword';
 import MyTestsList from './component/GetMyTests';
+import HomePage from './component/HomePage';
 
 
 function PrivateRoute({ children }) {
@@ -25,6 +26,7 @@ function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/create-exam" element={<CreateExamMain />} />

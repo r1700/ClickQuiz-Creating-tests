@@ -34,6 +34,7 @@
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "fs": "^0.0.1-security",
     "google-auth-library": "^10.4.1",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.12.1",
@@ -42,9 +43,13 @@
     "jspdf-autotable": "^5.0.2",
     "jwt-decode": "^4.0.0",
     "mongodb": "^6.20.0",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.9",
+    "path": "^0.12.7",
     "pdfmake": "^0.2.20",
+    "qrcode.react": "^4.2.0",
     "react-router-dom": "^7.9.3",
+    "react-to-print": "^3.2.0",
     "stylis-plugin-rtl": "^2.1.1"
   }
 }

@@ -7,7 +7,7 @@ dotenv.config();
 
 import examRoutes from "./routes/examRoutes.js";
 import authRoutes from "./routes/auth.js";
-import User from "./models/User.js"; // נתיב למודל שלך
+import pdfRoutes from "./routes/pdf.js";
 
 const app = express();
 app.use(express.json());
@@ -29,6 +29,7 @@ mongoose.connect(process.env.MONGO_URI)
 // שימוש ב‑routes
 app.use("/api/exams", examRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/pdf", pdfRoutes);
 
 
 
