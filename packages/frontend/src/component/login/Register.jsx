@@ -108,7 +108,7 @@ export default function Register() {
       setUser(user);
       setSuccess("נרשמת בהצלחה!");
       setTimeout(() => navigate("/"), 800);
-      setTimeout(() => navigate("/get-my-exams"), 800);
+      // setTimeout(() => navigate("/get-my-exams"), 800);
     } catch (e) {
       const msg = e.response?.data?.message || "שגיאה בהרשמה";
       setGlobalErr(msg);
