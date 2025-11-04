@@ -7,10 +7,17 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { createExamAIService } from "../../services/Exam.services";
 import QuestionsList from "./QuestionsList";
 
+
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#14B0FF";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
+
 // --- רכיב עזר לשדה טקסט עם תווית מעל ---
 const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
   <Box sx={{ mb: 2 }}>
-    <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>{label}</Typography>
+    <Typography sx={{ mb: 0.5, fontWeight: 400, color: PRIMARY_COLOR }}>{label}</Typography>
     <TextField
       type={type}
       value={value}
@@ -136,7 +143,7 @@ export default function CreateExamAI() {
         alignItems: "center",
         py: 6,
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #e3f0ff 0%, #f9f9ff 100%)",
+        background: LIGHT_BG,
         direction: "rtl",
       }}
     >
@@ -158,7 +165,7 @@ export default function CreateExamAI() {
             align="center"
             sx={{
               mb: 3,
-              color: "#283593",
+              color: PRIMARY_COLOR,
               letterSpacing: 1,
               textShadow: "0 2px 8px #e3e8ff",
             }}

@@ -13,6 +13,12 @@ import {
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services/authService";
 
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#3B6B7F";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
+
 export default function ResetPassword() {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -52,7 +58,7 @@ export default function ResetPassword() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f3f4f6",
+        bgcolor: LIGHT_BG,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

@@ -11,7 +11,7 @@ export const sendEmail = async ({ to, subject, html, text }) => {
   });
 
   const info = await transporter.sendMail({
-    from: `"Teacher Tests" <${process.env.EMAIL_USER}>`,
+    from: `"ClickQuiz" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     text,

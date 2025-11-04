@@ -5,6 +5,12 @@ import {
 import QuestionsList from "./QuestionsList";
 import { createExamManualService } from "../../services/Exam.services";
 
+
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#14B0FF";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
 // --- רכיב עזר לשדה טקסט עם תווית מעל ---
 const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
   <Box sx={{ mb: 2 }}>
@@ -93,7 +99,7 @@ export default function CreateExamManual() {
         alignItems: "center",
         py: 6,
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #e3f0ff 0%, #f9f9ff 100%)",
+        background: LIGHT_BG,
         direction: "rtl",
       }}
     >

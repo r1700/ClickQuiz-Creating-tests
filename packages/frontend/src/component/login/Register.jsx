@@ -14,12 +14,17 @@ import {
   Divider,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { register } from "../../services/authService"; // פונקציה שתיצור בשרת שלך
+import { loginWithGoogle, register } from "../../services/authService"; // פונקציה שתיצור בשרת שלך
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#3B6B7F";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
 // --- רכיב עזר לשדה טקסט עם תווית מעל והודעת שגיאה ---
 const LabeledField = ({
   label,
@@ -102,7 +107,7 @@ export default function Register() {
       const user = await register(form);
       setUser(user);
       setSuccess("נרשמת בהצלחה!");
-    //   setTimeout(() => navigate("/dashboard"), 800);
+      setTimeout(() => navigate("/"), 800);
       setTimeout(() => navigate("/get-my-exams"), 800);
     } catch (e) {
       const msg = e.response?.data?.message || "שגיאה בהרשמה";
@@ -116,7 +121,7 @@ export default function Register() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: "#f3f4f6",
+        bgcolor: LIGHT_BG,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -233,14 +238,31 @@ export default function Register() {
             </Divider>
 
             {/* 🔹 Google Register */}
-            <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
               <GoogleLogin
-                onSuccess={(credentialResponse) => {
+                onSuccess={async (credentialResponse) => {
                   const decoded = jwtDecode(credentialResponse.credential);
                   console.log("👩‍🏫 Google user:", decoded);
+                  const idToken = credentialResponse.credential;
+                  try {
+                    // שלח את ה־idToken לשרת
+                    const res = await loginWithGoogle({ idToken });
+                    setUser(res.user);
+                    // Cookies.set("token", res.user.token, { expires: 7, path: "/" }); // נשמר לשבוע שלם
+                    // Cookies.set("userName", res.user.name, { expires: 7, path: "/" });
+                    // navigate("/dashboard");
+                    navigate("/");
+                    // navigate("/get-my-exams");
+                  } catch (err) {
+                    console.log("Google login error:", err);
+                    console.log("🟡 Received idToken:", idToken.slice(0, 20));
+
+
+                    alert(err.response?.data?.message || "שגיאה בהתחברות עם Google");
+                  }
                   setUser(decoded);
-                //   navigate("/dashboard");
-                  navigate("/get-my-exams");
+                  navigate("/");
+                  // navigate("/get-my-exams");
                 }}
                 onError={() => {
                   alert("שגיאה בהרשמה עם Google");

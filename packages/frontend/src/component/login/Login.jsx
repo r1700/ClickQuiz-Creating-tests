@@ -8,7 +8,14 @@ import { login, loginWithGoogle } from "../../services/authService";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import Cookies from "js-cookie";
 
+
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#3B6B7F";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
 // --- רכיב עזר לשדה טקסט עם תווית מעל והודעת שגיאה ---
 const LabeledField = ({
     label,
@@ -77,9 +84,11 @@ export default function Login() {
         try {
             const user = await login(form);
             setUser(user);
+           
             setSuccess("התחברת בהצלחה!");
             // setTimeout(() => navigate("/dashboard"), 800);
-            setTimeout(() => navigate("/get-my-exams"), 800);
+            // setTimeout(() => navigate("/get-my-exams"), 800);
+            setTimeout(() => navigate("/"), 800);
         } catch (e) {
             const msg = e.response?.data?.message || "משתמשת לא קיימת";
             setGlobalErr(msg);
@@ -95,7 +104,7 @@ export default function Login() {
         <Box
             sx={{
                 minHeight: "100vh",
-                bgcolor: "#f3f4f6",
+                bgcolor: LIGHT_BG,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
@@ -199,7 +208,7 @@ export default function Login() {
                         </Divider>
 
                         {/* 🔹 Google Login */}
-                        <GoogleOAuthProvider clientId="964659551947-f6aulhcuivlu16pg1bv67jo47s6bmk4n.apps.googleusercontent.com">
+                        <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
                             <GoogleLogin
                                 onSuccess={async (credentialResponse) => {
                                     const idToken = credentialResponse.credential;
@@ -207,8 +216,11 @@ export default function Login() {
                                         // שלח את ה־idToken לשרת
                                         const res = await loginWithGoogle({ idToken });
                                         setUser(res.user);
+                                        // Cookies.set("token", res.user.token, { expires: 7, path: "/" }); // נשמר לשבוע שלם
+                                        // Cookies.set("userName", res.user.name, { expires: 7, path: "/" });
                                         // navigate("/dashboard");
-                                        navigate("/get-my-exams");
+                                        navigate("/");
+                                        // navigate("/get-my-exams");
                                     } catch (err) {
                                         console.log("Google login error:", err);
                                         console.log("🟡 Received idToken:", idToken.slice(0, 20));

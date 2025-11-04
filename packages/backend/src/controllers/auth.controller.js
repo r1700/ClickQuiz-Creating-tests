@@ -6,18 +6,23 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { OAuth2Client } from "google-auth-library";
+import { log } from "console";
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
     //   secure: process.env.NODE_ENV === "production", // true in prod with HTTPS
     secure: false,
+    // secure: process.env.NODE_ENV === "production" ? true : false, // או אפילו true גם ב-dev אם את עובדת על https
     sameSite: "lax",
+    // sameSite: process.env.NODE_ENV === "production" ? "None" : "None", // חשוב: None ב-localhost
+    // sameSite: "None" , // חשוב: None ב-localhost
     path: "/",           // חשוב להחלפה נכונה
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
 };
 
 export const register = async (req, res) => {
     try {
+        console.log("📦 Request body:", req.body);
         const { name, email, password } = req.body;
         if (!email || !password || !name) return res.status(400).json({ message: "Missing fields" });
         const exists = await User.findOne({ email });
@@ -59,8 +64,27 @@ export const login = async (req, res) => {
     }
 }
 // logout
+// export const logout = (req, res) => {
+//     res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production" }).json({ ok: true });
+// };
 export const logout = (req, res) => {
-    res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production" }).json({ ok: true });
+    try {
+        // מוחקים את כל הקוקיז הרלוונטיים
+        const cookiesToClear = ["token", "userName", "g_state"];
+        cookiesToClear.forEach(name => {
+            res.clearCookie(name, {
+                httpOnly: true,          // במיוחד ל-token
+                sameSite: "none",        // או "lax" לפי הצורך שלך
+                secure: process.env.NODE_ENV === "production",
+                path: "/",               // חשוב למחוק ב-path הנכון
+            });
+        });
+
+        res.json({ message: "Logged out successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error" });
+    }
 };
 
 

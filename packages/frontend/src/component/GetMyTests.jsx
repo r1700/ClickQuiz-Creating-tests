@@ -1,4 +1,4 @@
-// src/components/MyTestsList.jsx
+// ...existing code...
 import React, { useEffect, useState } from "react";
 import {
     Box,
@@ -17,6 +17,9 @@ import {
     Divider,
     Tooltip,
     Fab,
+    Avatar,
+    Chip,
+    Paper,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import AddIcon from '@mui/icons-material/Add';
@@ -27,6 +30,12 @@ import { Preview, Edit, Delete } from "@mui/icons-material";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { deleteExamService } from "../services/Exam.services";
 
+
+// צבעים
+const PRIMARY_COLOR = "#002275";
+const SECONDARY_COLOR = "#3B6B7F";
+const ACCENT_COLOR = "#FFB300";
+const LIGHT_BG = "#F6F9FB";
 
 const MyTestsList = () => {
     const navigate = useNavigate();
@@ -110,7 +119,7 @@ const MyTestsList = () => {
 
     if (loading)
         return (
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 5 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
                 <CircularProgress />
             </Box>
         );
@@ -118,277 +127,312 @@ const MyTestsList = () => {
     if (error) return <Alert severity="error">{error}</Alert>;
 
     return (
-        <Box
-            sx={{
-                maxWidth: 950,
-                mx: "auto",
-                mt: 5,
-                direction: "rtl",
-                textAlign: "right",
-                px: 2,
-            }}
-        >
-            {/* כותרת עליונה עם כפתור חיפוש */}
-            <Stack
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                sx={{ mb: 2 }}
+        <Box sx={{ bgcolor: LIGHT_BG }}>
+            <Box
+                sx={{
+                    maxWidth: 1100,
+                    mx: "auto",
+                    mt: 4,
+                    direction: "rtl",
+                    textAlign: "right",
+                    px: { xs: 2, md: 3 },
+                    marginTop: 0,
+
+                }}
             >
-                <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-                    המבחנים שלי
-                </Typography>
-
-                <IconButton
-                    color="primary"
-                    onClick={() => setShowFilters((prev) => !prev)}
+                {/* ראשית: כותרת עם רקע עדין */}
+                < Paper
+                    elevation={2}
                     sx={{
-                        bgcolor: "#e3f2fd",
-                        "&:hover": { bgcolor: "#bbdefb" },
-                        borderRadius: "50%",
+                        p: 2,
+                        mb: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        background: "linear-gradient(90deg,#f7fbfc,#eef7fa)",
+                        borderRadius: "12px",
+
                     }}
                 >
-                    <Search />
-                </IconButton>
-            </Stack>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        {/* <Avatar sx={{ bgcolor: "#3B6B7F", width: 52, height: 52 }}>
+                        מבח
+                    </Avatar> */}
+                        <Box>
+                            <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                                המבחנים שלי
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                ניהול, עריכה ושיתוף של מבחנים שנוצרו על ידיך
+                            </Typography>
+                        </Box>
+                    </Stack>
 
-            {/* תיבת חיפוש נפתחת */}
-            <Collapse in={showFilters}>
-                <Card
-                    variant="outlined"
-                    sx={{
-                        mb: 4,
-                        p: 3,
-                        bgcolor: "#fdfdfd",
-                        borderRadius: "16px",
-                        boxShadow: "0 3px 10px rgba(0,0,0,0.05)",
-                    }}
-                >
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item xs={12} sm={6} md={4}>
-                            <TextField
-                                fullWidth
-                                // label="חיפוש חופשי"
-                                placeholder="הקלידי שם מבחן, מקצוע, נושא או כיתה..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                InputLabelProps={{
-                                    sx: { right: "10px", left: "unset", transformOrigin: "right" },
-                                }}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": { borderRadius: "12px" },
-                                    direction: "rtl",
-                                }}
-                            />
-                        </Grid>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => navigate("/create-exam")}
+                            startIcon={<AddIcon />}
+                            sx={{ bgcolor: ACCENT_COLOR }}
+                        >
+                            יצירת מבחן חדש
+                        </Button>
 
-                        <Grid item xs={12} sm={6} md={4}>
-                            <TextField
-                                select
-                                value={subject}
-                                onChange={(e) => setSubject(e.target.value)}
-                                displayEmpty
-                                SelectProps={{
-                                    displayEmpty: true,
-                                    renderValue: (selected) =>
-                                        selected ? (
-                                            selected
-                                        ) : (
-                                            <span style={{ color: "#9e9e9e" }}> מקצוע</span>
-                                        ),
-                                    MenuProps: {
-                                        PaperProps: { sx: { direction: "rtl" } },
-                                    },
-                                }}
-                                sx={{
-                                    width: "150px", // רוחב קבוע
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "14px",
-                                        height: "56px", // גובה קבוע
-                                        display: "flex",
-                                        alignItems: "center",
-                                    },
-                                    "& .MuiSelect-select": {
-                                        width: "100%", // התוכן תופס את כל הרוחב
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "flex-start",
-                                        textAlign: "right",
-                                        fontSize: "1.1rem",
-                                        fontWeight: 500,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        paddingRight: "12px",
-                                    },
-                                    direction: "rtl",
-                                }}
-                            >
-                                <MenuItem value="">הכל</MenuItem>
-                                {[...new Set(exams.map((e) => e.subject))].map((sub) => (
-                                    <MenuItem key={sub} value={sub} sx={{ fontSize: "1.05rem" }}>
-                                        {sub}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-
-                        <Grid item xs={12} sm={6} md={4}>
-                            <TextField
-                                select
-                                value={classroom}
-                                onChange={(e) => setClassroom(e.target.value)}
-                                displayEmpty
-                                SelectProps={{
-                                    displayEmpty: true,
-                                    renderValue: (selected) =>
-                                        selected ? (
-                                            selected
-                                        ) : (
-                                            <span style={{ color: "#9e9e9e" }}>כיתה</span>
-                                        ),
-                                    MenuProps: {
-                                        PaperProps: { sx: { direction: "rtl" } },
-                                    },
-                                }}
-                                sx={{
-                                    width: "90px", // רוחב קבוע
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "14px",
-                                        height: "56px", // גובה קבוע
-                                        display: "flex",
-                                        alignItems: "center",
-                                    },
-                                    "& .MuiSelect-select": {
-                                        width: "100%", // התוכן תופס את כל הרוחב
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "flex-start",
-                                        textAlign: "right",
-                                        fontSize: "1.1rem",
-                                        fontWeight: 500,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        paddingRight: "12px",
-                                    },
-                                    direction: "rtl",
-                                }}
-                            >
-                                <MenuItem value="">הכל</MenuItem>
-                                {[...new Set(exams.map((e) => e.classroom))].map((classroom) => (
-                                    <MenuItem key={classroom} value={classroom} sx={{ fontSize: "1.05rem" }}>
-                                        {classroom}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Grid>
-                    </Grid>
-                </Card>
-            </Collapse>
-
-            {/* רשימת מבחנים */}
-            {filtered.length === 0 ? (
-                <Typography align="center" sx={{ mt: 5, color: "gray" }}>
-                    😕 לא נמצאו מבחנים התואמים לחיפוש שלך
-                </Typography>
-            ) : (
-                <Stack spacing={2}>
-                    {filtered.map((exam) => (
-                        <Card
-                            key={exam._id}
-                            variant="outlined"
+                        <IconButton
+                            color="primary"
+                            onClick={() => setShowFilters((prev) => !prev)}
                             sx={{
-                                borderRadius: "16px",
-                                boxShadow: "0 3px 8px rgba(0,0,0,0.08)",
-                                transition: "0.2s",
-                                "&:hover": { boxShadow: "0 4px 14px rgba(0,0,0,0.15)" },
+                                bgcolor: "#ffffff",
+                                borderRadius: "10px",
+                                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
                             }}
                         >
-                            <CardContent>
-                                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                                    {exam.title}
-                                </Typography>
-                                <Divider sx={{ my: 1.5 }} />
-                                <Typography color="textSecondary">מקצוע: {exam.subject}</Typography>
-                                <Typography color="textSecondary">נושא: {exam.topic}</Typography>
-                                <Typography color="textSecondary">כיתה: {exam.classroom}</Typography>
-                                <Typography color="textSecondary" sx={{ mb: 2 }}>
-                                    תאריך יצירה:{" "}
-                                    {new Date(exam.createdAt).toLocaleDateString("he-IL")}
-                                </Typography>
-                                <Stack direction="row" spacing={1}>
-                                    <IconButton
-                                        color="primary"
-                                        onClick={() => navigate(`/export-exam/${exam._id}`)}
-                                        title="צפה במבחן"
-                                    >
-                                        <Preview />
-                                    </IconButton>
+                            <Search />
+                        </IconButton>
+                    </Stack>
+                </Paper >
 
-                                    <IconButton
-                                        color="secondary"
-                                        onClick={() => navigate(`/edit-exam/${exam._id}`)}
-                                        title="עריכה"
-                                    >
-                                        <Edit />
-                                    </IconButton>
+                {/* תיבת חיפוש/פילטרים */}
+                < Collapse in={showFilters}>
+                    <Card
+                        variant="outlined"
+                        sx={{
+                            mb: 3,
+                            p: 3,
+                            bgcolor: "#ffffff",
+                            borderRadius: "12px",
+                            boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
+                        }}
+                    >
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item xs={12} md={6}>
+                                <TextField
+                                    fullWidth
+                                    placeholder="הקלידי שם מבחן, מקצוע, נושא או כיתה..."
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    InputLabelProps={{
+                                        sx: { right: "10px", left: "unset", transformOrigin: "right" },
+                                    }}
+                                    sx={{
+                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
+                                        direction: "rtl",
+                                    }}
+                                />
+                            </Grid>
 
-                                    <IconButton
-                                        color="error"
-                                        onClick={() => handleDeleteClick(exam._id)}
-                                        title="מחיקה"
-                                    >
-                                        <Delete />
-                                    </IconButton>
-                                </Stack>
+                            <Grid item xs={6} sm={3} md={2}>
+                                <TextField
+                                    select
+                                    value={subject}
+                                    onChange={(e) => setSubject(e.target.value)}
+                                    displayEmpty
+                                    SelectProps={{
+                                        displayEmpty: true,
+                                        renderValue: (selected) =>
+                                            selected ? selected : <span style={{ color: "#9e9e9e" }}>מקצוע</span>,
+                                        MenuProps: { PaperProps: { sx: { direction: "rtl" } } },
+                                    }}
+                                    sx={{
+                                        width: "100%",
+                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
+                                        direction: "rtl",
+                                    }}
+                                >
+                                    <MenuItem value="">הכל</MenuItem>
+                                    {[...new Set(exams.map((e) => e.subject))].map((sub) => (
+                                        <MenuItem key={sub} value={sub}>
+                                            {sub}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
 
+                            <Grid item xs={6} sm={3} md={2}>
+                                <TextField
+                                    select
+                                    value={classroom}
+                                    onChange={(e) => setClassroom(e.target.value)}
+                                    displayEmpty
+                                    SelectProps={{
+                                        displayEmpty: true,
+                                        renderValue: (selected) =>
+                                            selected ? selected : <span style={{ color: "#9e9e9e" }}>כיתה</span>,
+                                        MenuProps: { PaperProps: { sx: { direction: "rtl" } } },
+                                    }}
+                                    sx={{
+                                        width: "100%",
+                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
+                                        direction: "rtl",
+                                    }}
+                                >
+                                    <MenuItem value="">הכל</MenuItem>
+                                    {[...new Set(exams.map((e) => e.classroom))].map((cr) => (
+                                        <MenuItem key={cr} value={cr}>
+                                            {cr}
+                                        </MenuItem>
+                                    ))}
+                                </TextField>
+                            </Grid>
 
-                            </CardContent>
-                        </Card>
-                    ))}
-                </Stack>
-            )}
-            {/* כפתור יצירת מבחן חדש */}
-            <Tooltip title="יצירת מבחן חדש" placement="left">
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    sx={{
-                        mt: 2, // מרווח מעל
-                        backgroundColor: '#3B6B7F',
-                        ":hover": {
-                            backgroundColor: 'brown',
-                        }
-                    }}
-                    onClick={() => navigate('/create-exam')}
+                            <Grid item xs={12} md={2} sx={{ textAlign: "left" }}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => {
+                                        setSearch("");
+                                        setSubject("");
+                                        setClassroom("");
+                                    }}
+                                >
+                                    נקה
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </Card>
+                </Collapse >
+
+                {/* תוכן הרשימה */}
+                {
+                    filtered.length === 0 ? (
+                        <Box sx={{ textAlign: "center", mt: 6, maxWidth: 1100 }}>
+                            <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
+                                😕 לא נמצאו מבחנים התואמים לחיפוש שלך
+                            </Typography>
+                            <Button variant="contained" onClick={() => navigate("/create-exam")}>
+                                צור מבחן ראשון
+                            </Button>
+                        </Box>
+                    ) : (
+                        <Stack spacing={2}>
+                            {filtered.map((exam) => (
+                                <Card
+                                    key={exam._id}
+                                    variant="outlined"
+                                    sx={{
+                                        borderRadius: "12px",
+                                        overflow: "hidden",
+                                        transition: "transform 0.14s, box-shadow 0.14s",
+                                        "&:hover": { transform: "translateY(-4px)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" },
+                                    }}
+                                >
+                                    <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                                        <Avatar
+                                            sx={{
+                                                bgcolor: "#4a90a4",
+                                                width: 64,
+                                                height: 64,
+                                                fontWeight: 700,
+                                                fontSize: "1.05rem",
+                                            }}
+                                        >
+                                            {String(exam.title || "מבחן").slice(6, 7).toUpperCase()}
+                                        </Avatar>
+
+                                        <Box sx={{ flex: 1 }}>
+                                            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                                                <Box>
+                                                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                                                        {exam.title}
+                                                    </Typography>
+                                                    <Typography variant="body2" color="text.secondary">
+                                                        נושא: {exam.topic || "-"}
+                                                    </Typography>
+                                                </Box>
+
+                                                <Stack direction="row" spacing={1} sx={{ pl: 2 }}>
+                                                    {/* <Chip label={exam.subject} color="primary" size="small" /> */}
+                                                    <Chip label={`כיתה ${exam.classroom}`} variant="outlined" size="small" />
+                                                </Stack>
+                                            </Stack>
+
+                                            <Divider sx={{ my: 1.2 }} />
+                                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                                                תאריך יצירה: {new Date(exam.createdAt).toLocaleDateString("he-IL")}
+                                            </Typography>
+
+                                        </Box>
+
+                                        <Stack direction="column" spacing={1} sx={{ ml: 1 }}>
+                                            <Tooltip title="צפה במבחן">
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={() => navigate(`/export-exam/${exam._id}`)}
+                                                    startIcon={<Preview />}
+                                                    sx={{ minWidth: 42 ,color: SECONDARY_COLOR,borderColor:SECONDARY_COLOR }}
+                                                />
+                                            </Tooltip>
+
+                                            <Tooltip title="ערוך">
+                                                <Button
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    onClick={() => navigate(`/edit-exam/${exam._id}`)}
+                                                    startIcon={<Edit />}
+                                                    sx={{ bgcolor: SECONDARY_COLOR, "&:hover": { bgcolor: "#5a8a92" } }}
+                                                />
+                                            </Tooltip>
+
+                                            <Tooltip title="מחק">
+                                                <Button
+                                                    variant="contained"
+                                                    color="error"
+                                                    onClick={() => handleDeleteClick(exam._id)}
+                                                    startIcon={<Delete />}
+                                                    sx={{ minWidth: 42,bgcolor:ACCENT_COLOR  }}
+                                                />
+                                            </Tooltip>
+                                        </Stack>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Stack>
+                    )
+                }
+
+                {/* כפתור צף ליצור מבחן */}
+                <Tooltip title="יצירת מבחן חדש" placement="left">
+                    <Fab
+                        color="primary"
+                        aria-label="add"
+                        sx={{
+                            position: "fixed",
+                            bottom: 24,
+                            left: 24,
+                            backgroundColor: '#3B6B7F',
+                            ":hover": { backgroundColor: '#355a65' },
+                        }}
+                        onClick={() => navigate('/create-exam')}
+                    >
+                        <AddIcon />
+                    </Fab>
+                </Tooltip>
+
+                <Dialog
+                    open={deleteDialogOpen}
+                    onClose={() => setDeleteDialogOpen(false)}
+                    dir="rtl"
                 >
-                    <AddIcon />
-                </Fab>
-            </Tooltip>
-
-            <Dialog
-                open={deleteDialogOpen}
-                onClose={() => setDeleteDialogOpen(false)}
-                dir="rtl"
-            >
-                <DialogTitle>אישור מחיקה</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        האם את בטוחה שברצונך למחוק את המבחן הזה? לא ניתן לשחזר אותו לאחר מכן.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)} color="inherit">
-                        ביטול
-                    </Button>
-                    <Button onClick={confirmDelete} color="error" variant="contained">
-                        מחקי
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </Box>
+                    <DialogTitle>אישור מחיקה</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            האם את בטוחה שברצונך למחוק את המבחן הזה? לא ניתן לשחזר אותו לאחר מכן.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDeleteDialogOpen(false)} color="inherit">
+                            ביטול
+                        </Button>
+                        <Button onClick={confirmDelete} color="error" variant="contained">
+                            מחק
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </Box >
+        </Box >
     );
 };
 
 export default MyTestsList;
+// ...existing code...

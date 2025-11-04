@@ -26,6 +26,12 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected!"))
   .catch(err => console.error(err));
 
+  app.get("/api/auth/logout", (req, res) => {
+  res.clearCookie("token", { path: "/" });
+  res.clearCookie("userName", { path: "/" });
+  res.json({ message: "Cookies cleared" });
+});
+
 // שימוש ב‑routes
 app.use("/api/exams", examRoutes);
 app.use("/api/auth", authRoutes);
