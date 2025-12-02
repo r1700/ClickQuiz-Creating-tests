@@ -260,8 +260,8 @@ export default function Register() {
 
                     alert(err.response?.data?.message || "שגיאה בהתחברות עם Google");
                   }
-                  setUser(decoded);
-                  navigate("/");
+                  // setUser(decoded);
+                  // navigate("/");
                   // navigate("/get-my-exams");
                 }}
                 onError={() => {

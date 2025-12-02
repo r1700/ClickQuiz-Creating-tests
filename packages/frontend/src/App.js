@@ -11,10 +11,11 @@ import ForgetPassword from './component/login/ForgetPassword';
 import ResetPassword from './component/login/resetPassword';
 import MyTestsList from './component/GetMyTests';
 import HomePage from './component/HomePage';
-import Sidebar from './component/SideBar';
+// import Sidebar from './component/SideBar';
 // import HomePage222 from './component/HomePage copy';
 import HomePageAnimated from './component/HomePage copy';
 import NavBar from './component/NavBar';
+import usePageTitle from './hooks/usePageTitle';
 
 
 function PrivateRoute({ children }) {
@@ -25,11 +26,13 @@ function PrivateRoute({ children }) {
 }
 
 function App() {
+  //  usePageTitle();
   return (
     <>
       <AuthProvider>
         <Router>
           {/* <Sidebar /> */}
+          <PageTitleHandler />
           <NavBar />
           <Routes>
             <Route path="/" element={<HomePageAnimated />} />
@@ -48,6 +51,12 @@ function App() {
       </AuthProvider>
     </>
   );
+}
+
+// קומפוננטה פנימית שמופעלת בתוך ה־Router
+function PageTitleHandler() {
+  usePageTitle();
+  return null;
 }
 
 export default App;
