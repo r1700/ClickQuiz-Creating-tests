@@ -17,6 +17,7 @@ import HomePageAnimated from './component/HomePage copy';
 import NavBar from './component/NavBar';
 import usePageTitle from './hooks/usePageTitle';
 import Footer from './component/Footer';
+import { Box } from '@mui/material';
 
 
 function PrivateRoute({ children }) {
@@ -34,22 +35,31 @@ function App() {
         <Router>
           {/* <Sidebar /> */}
           <PageTitleHandler />
-          <NavBar />
-          <Routes>
-            <Route path="/" element={<HomePageAnimated />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/create-exam" element={<CreateExamMain />} />
-            <Route path="/export-exam/:id" element={<ExportExam />} />
-            <Route path="/edit-exam/:examId" element={<EditExam />} />
-            <Route path="/get-my-exams" element={<MyTestsList />} />
-            <Route path="/forget-password" element={<ForgetPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/" element={<PrivateRoute><CreateExamMain /></PrivateRoute>} />
-          </Routes>
+
+          <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "#F6F9FB", pt: "120px" }}>
+            <NavBar />
+
+            <Box sx={{ flex: 1,px: 2  }}>
+              <Routes>
+                <Route path="/" element={<HomePageAnimated />} />
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/create-exam" element={<CreateExamMain />} />
+                <Route path="/export-exam/:id" element={<ExportExam />} />
+                <Route path="/edit-exam/:examId" element={<EditExam />} />
+                <Route path="/get-my-exams" element={<MyTestsList />} />
+                <Route path="/forget-password" element={<ForgetPassword />} />
+                <Route path="/reset-password/:token" element={<ResetPassword />} />
+                <Route path="/" element={<PrivateRoute><CreateExamMain /></PrivateRoute>} />
+              </Routes>
+            </Box>
+
+            <Footer />
+          </Box>
+
         </Router>
-        <Footer />
+
       </AuthProvider>
     </>
   );

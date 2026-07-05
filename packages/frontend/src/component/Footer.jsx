@@ -6,7 +6,7 @@ const SECONDARY_COLOR = "#14B0FF";
 
 export default function Footer() {
     return (
-        <Box sx={{ mt: 8, background: `linear-gradient(135deg, ${PRIMARY_COLOR}, ${SECONDARY_COLOR})`, color: "white", py: 5 }}>
+        <Box sx={{ mt: "auto", background: `linear-gradient(135deg, ${PRIMARY_COLOR}, ${SECONDARY_COLOR})`, color: "white", py: 5 }}>
             <Container sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <Typography variant="body2">© 2025 ClickQuiz - כל הזכויות שמורות</Typography>
                 <Box>

@@ -91,9 +91,9 @@ const MyTestsList = () => {
                 // if (err.response?.status === 401) {
                 //     setExams([]);
                 //     setFiltered([]);
-                    // setError("את לא מחוברת. התחברי כדי לראות את המבחנים שלך.");
+                // setError("את לא מחוברת. התחברי כדי לראות את המבחנים שלך.");
                 // } else {
-                    setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
+                setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
                 // }
             } finally {
                 setLoading(false);
@@ -305,16 +305,19 @@ const MyTestsList = () => {
                     filtered.length === 0 ? (
                         <Box sx={{ textAlign: "center", mt: 6, maxWidth: 1100 }}>
                             <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
-                                😕 {exams.length === 0
+                                😕 {!user
                                     ? "התחברי כדי לראות את המבחנים שלך"
-                                    : "לא נמצאו מבחנים התואמים לחיפוש שלך"}                            </Typography>
-                            {exams.length === 0 ? (
+                                    : "אין לך מבחנים עדיין"}
+                            </Typography>
+                            {!user ? (
                                 <Button variant="contained" onClick={() => navigate("/login")}>
                                     התחברות
-                                </Button>) : (
+                                </Button>
+                            ) : (
                                 <Button variant="contained" onClick={() => navigate("/create-exam")}>
                                     צור מבחן ראשון
-                                </Button>)}
+                                </Button>
+                            )}
                         </Box>
                     ) : (
                         <Stack spacing={2}>

@@ -218,6 +218,7 @@ const HomePageAnimatedStyled = () => {
                 <Box
                     id="about-section"
                     sx={{
+                        scrollMarginTop: "100px",
                         mt: 10,
                         py: 8,
                         px: 3,
