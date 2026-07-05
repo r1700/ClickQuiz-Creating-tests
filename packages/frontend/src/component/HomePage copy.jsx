@@ -110,8 +110,8 @@ const FeatureCard = ({ icon, title, text }) => (
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "flex-start",
-            height: 200, // גובה אחיד
-            width: 200, // רוחב אחיד
+            height:  200 , 
+            width: 200 ,
             transition: "0.3s",
             "&:hover": { transform: "translateY(-10px)", boxShadow: "0 20px 40px rgba(0,0,0,0.15)" },
         }}
@@ -148,13 +148,10 @@ const testimonials = [
 const HomePageAnimatedStyled = () => {
     const [current, setCurrent] = useState(0);
     const navigate = useNavigate();
-    // const token = Cookies.get("token");
-    // const isLoggedIn = Boolean(token);
     const { user, isLoggedIn, loading } = useContext(AuthContext);
     // if (loading) return <div>טוען...</div>;
 
-    console.log(user);
-    console.log(" 😓  isLoggedIn:", isLoggedIn);
+
 
     useEffect(() => {
         const interval = setInterval(() => setCurrent((s) => (s + 1) % testimonials.length), 4500);
@@ -163,16 +160,7 @@ const HomePageAnimatedStyled = () => {
 
     const prevTestimonial = () => setCurrent((s) => (s - 1 + testimonials.length) % testimonials.length);
     const nextTestimonial = () => setCurrent((s) => (s + 1) % testimonials.length);
-    const funcClearCookies = async () => {
-        console.log("Clearing cookies...");
-
-        await fetch(`${process.env.REACT_APP_API_URL}/auth/logout`, { method: "GET", credentials: "include" });
-        Cookies.remove("token");
-        Cookies.remove("userName");
-        console.log("Clearing 2222...");
-
-        // לאחר ניקוי העוגיות, ניתן לנתב מחדש או לעדכן את המצב
-    };
+ 
 
     return (
         <Box sx={{ direction: "rtl", background: LIGHT_BG, minHeight: "100vh", pb: 8, marginTop: 0 }}>
@@ -183,7 +171,7 @@ const HomePageAnimatedStyled = () => {
                     <FloatingShape top="10%" left="5%" size="180px" opacity={0.15} />
                     <FloatingShape top="40%" left="70%" size="250px" opacity={0.1} />
 
-                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1.06 }}>{`יצירת מבחנים מקצועית - בפחות זמן`}</Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1.06, fontSize: { xs: "1.8rem", md: "3rem" } }}>{`יצירת מבחנים מקצועית - בפחות זמן`}</Typography>
                     <Typography sx={{ mt: 2, color: "rgba(255,255,255,0.92)" }}>
                         השתמשי ב‑AI ליצירת שאלות אוטומטית, סדרי וערכי מבחנים בקלות, ושיתפי עם תלמידות מהשיעור.
                     </Typography>
@@ -205,10 +193,10 @@ const HomePageAnimatedStyled = () => {
                 {/* פונקציות */}
                 <Box sx={{ mt: 6, alignItems: "center" }}>
                     {/* <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 3 }}>פונקציות עיקריות</Typography> */}
-                    <Grid container spacing={2} justifyContent="center" margin=" 0 80px 0 80px">
+                    <Grid container spacing={2} justifyContent="center" margin={{ xs: "0", md: "0 80px 0 80px" }}>
                         {features.map((f) => (
                             <Grid item xs={12} sm={6} md={4} key={f.key}>
-                                <FeatureCard icon={f.icon} title={f.title} text={f.text} />
+                                <FeatureCard  icon={f.icon} title={f.title} text={f.text} />
                             </Grid>
                         ))}
                     </Grid>

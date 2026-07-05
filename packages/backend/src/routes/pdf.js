@@ -29,7 +29,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.post("/upload-pdf", upload.single("file"), (req, res) => {
-    console.log("🐒🐒🐒🐒🐒🐒");
 
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
     res.json({ id: req.file.filename });
@@ -41,7 +40,6 @@ router.get("/pdf/:id", (req, res) => {
         res.sendFile(filePath); // מציג את הקובץ בדפדפן
         // res.download(filePath);
     } else {
-        console.error("File not found");
         res.status(404).send("File not found");
     }
 });

@@ -49,7 +49,7 @@ const ExportExam = () => {
 
   return (
     <Box sx={{ bgcolor: LIGHT_BG }}>
-      <Box sx={{ maxWidth: "900px", margin: "0 auto", padding: 3, direction: "rtl" }}>
+      <Box sx={{ maxWidth: "900px", margin: "0 auto", padding: { xs: 1, md: 3 }, direction: "rtl" }}>
         <Button variant="text" onClick={() => navigate(-1)}> → </Button>
 
         <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold", mb: 2 }}>

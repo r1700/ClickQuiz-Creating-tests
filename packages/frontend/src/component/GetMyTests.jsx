@@ -88,25 +88,17 @@ const MyTestsList = () => {
                 setExams(res.data);
                 setFiltered(res.data);
             } catch (err) {
-                // if (err.response?.status === 401) {
-                //     setExams([]);
-                //     setFiltered([]);
-                // setError("את לא מחוברת. התחברי כדי לראות את המבחנים שלך.");
-                // } else {
                 setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
-                // }
             } finally {
                 setLoading(false);
             }
         };
-
         fetchExams();
     }, [user]);
 
     // סינון
     useEffect(() => {
         let filteredExams = [...exams];
-
         if (search) {
             const s = search.toLowerCase();
             filteredExams = filteredExams.filter(
@@ -117,11 +109,8 @@ const MyTestsList = () => {
                     e.classroom?.toLowerCase().includes(s)
             );
         }
-
         if (subject) filteredExams = filteredExams.filter((e) => e.subject === subject);
-        if (classroom)
-            filteredExams = filteredExams.filter((e) => e.classroom === classroom);
-
+        if (classroom) filteredExams = filteredExams.filter((e) => e.classroom === classroom);
         setFiltered(filteredExams);
     }, [search, subject, classroom, exams]);
 
@@ -145,11 +134,10 @@ const MyTestsList = () => {
                     textAlign: "right",
                     px: { xs: 2, md: 3 },
                     marginTop: 0,
-
                 }}
             >
-                {/* ראשית: כותרת עם רקע עדין */}
-                < Paper
+                {/* כותרת */}
+                <Paper
                     elevation={2}
                     sx={{
                         p: 2,
@@ -159,33 +147,32 @@ const MyTestsList = () => {
                         justifyContent: "space-between",
                         background: "linear-gradient(90deg,#f7fbfc,#eef7fa)",
                         borderRadius: "12px",
-
                     }}
                 >
                     <Stack direction="row" spacing={2} alignItems="center">
-                        {/* <Avatar sx={{ bgcolor: "#3B6B7F", width: 52, height: 52 }}>
-                        מבח
-                    </Avatar> */}
                         <Box>
                             <Typography variant="h5" sx={{ fontWeight: 700 }}>
                                 המבחנים שלי
                             </Typography>
-                            <Typography variant="body2" color="text.secondary">
+                            <Typography variant="body2" color="text.secondary" sx={{ display: { xs: "none", md: "block" } }}>
                                 ניהול, עריכה ושיתוף של מבחנים שנוצרו על ידיך
                             </Typography>
                         </Box>
                     </Stack>
 
                     <Stack direction="row" spacing={1} alignItems="center">
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => navigate("/create-exam")}
-                            startIcon={<AddIcon />}
-                            sx={{ bgcolor: ACCENT_COLOR }}
-                        >
-                            יצירת מבחן חדש
-                        </Button>
+                        <Tooltip title="יצירת מבחן חדש">
+                            <Button
+                                variant="contained"
+                                onClick={() => navigate("/create-exam")}
+                                startIcon={<AddIcon />}
+                                sx={{ bgcolor: ACCENT_COLOR, minWidth: 0, px: { xs: 1, md: 2 } }}
+                            >
+                                <Box sx={{ display: { xs: "none", md: "block" } }}>
+                                    יצירת מבחן חדש
+                                </Box>
+                            </Button>
+                        </Tooltip>
 
                         <IconButton
                             color="primary"
@@ -199,10 +186,10 @@ const MyTestsList = () => {
                             <Search />
                         </IconButton>
                     </Stack>
-                </Paper >
+                </Paper>
 
-                {/* תיבת חיפוש/פילטרים */}
-                < Collapse in={showFilters}>
+                {/* פילטרים */}
+                <Collapse in={showFilters}>
                     <Card
                         variant="outlined"
                         sx={{
@@ -220,22 +207,17 @@ const MyTestsList = () => {
                                     placeholder="הקלידי שם מבחן, מקצוע, נושא או כיתה..."
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
-                                    InputLabelProps={{
-                                        sx: { right: "10px", left: "unset", transformOrigin: "right" },
-                                    }}
                                     sx={{
                                         "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
                                         direction: "rtl",
                                     }}
                                 />
                             </Grid>
-
                             <Grid item xs={6} sm={3} md={2}>
                                 <TextField
                                     select
                                     value={subject}
                                     onChange={(e) => setSubject(e.target.value)}
-                                    displayEmpty
                                     SelectProps={{
                                         displayEmpty: true,
                                         renderValue: (selected) =>
@@ -250,19 +232,15 @@ const MyTestsList = () => {
                                 >
                                     <MenuItem value="">הכל</MenuItem>
                                     {[...new Set(exams.map((e) => e.subject))].map((sub) => (
-                                        <MenuItem key={sub} value={sub}>
-                                            {sub}
-                                        </MenuItem>
+                                        <MenuItem key={sub} value={sub}>{sub}</MenuItem>
                                     ))}
                                 </TextField>
                             </Grid>
-
                             <Grid item xs={6} sm={3} md={2}>
                                 <TextField
                                     select
                                     value={classroom}
                                     onChange={(e) => setClassroom(e.target.value)}
-                                    displayEmpty
                                     SelectProps={{
                                         displayEmpty: true,
                                         renderValue: (selected) =>
@@ -277,137 +255,118 @@ const MyTestsList = () => {
                                 >
                                     <MenuItem value="">הכל</MenuItem>
                                     {[...new Set(exams.map((e) => e.classroom))].map((cr) => (
-                                        <MenuItem key={cr} value={cr}>
-                                            {cr}
-                                        </MenuItem>
+                                        <MenuItem key={cr} value={cr}>{cr}</MenuItem>
                                     ))}
                                 </TextField>
                             </Grid>
-
                             <Grid item xs={12} md={2} sx={{ textAlign: "left" }}>
-                                <Button
-                                    variant="outlined"
-                                    onClick={() => {
-                                        setSearch("");
-                                        setSubject("");
-                                        setClassroom("");
-                                    }}
-                                >
+                                <Button variant="outlined" onClick={() => { setSearch(""); setSubject(""); setClassroom(""); }}>
                                     נקה
                                 </Button>
                             </Grid>
                         </Grid>
                     </Card>
-                </Collapse >
+                </Collapse>
 
-                {/* תוכן הרשימה */}
-                {
-                    filtered.length === 0 ? (
-                        <Box sx={{ textAlign: "center", mt: 6, maxWidth: 1100 }}>
-                            <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
-                                😕 {!user
-                                    ? "התחברי כדי לראות את המבחנים שלך"
-                                    : "אין לך מבחנים עדיין"}
-                            </Typography>
-                            {!user ? (
-                                <Button variant="contained" onClick={() => navigate("/login")}>
-                                    התחברות
-                                </Button>
-                            ) : (
-                                <Button variant="contained" onClick={() => navigate("/create-exam")}>
-                                    צור מבחן ראשון
-                                </Button>
-                            )}
-                        </Box>
-                    ) : (
-                        <Stack spacing={2}>
-                            {filtered.map((exam) => (
-                                <Card
-                                    key={exam._id}
-                                    variant="outlined"
-                                    sx={{
-                                        borderRadius: "12px",
-                                        overflow: "hidden",
-                                        transition: "transform 0.14s, box-shadow 0.14s",
-                                        "&:hover": { transform: "translateY(-4px)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" },
-                                    }}
-                                >
-                                    <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                                        <Avatar
-                                            sx={{
-                                                bgcolor: "#4a90a4",
-                                                width: 64,
-                                                height: 64,
-                                                fontWeight: 700,
-                                                fontSize: "1.05rem",
-                                            }}
-                                        >
-                                            {String(exam.title || "מבחן").slice(6, 7).toUpperCase()}
-                                        </Avatar>
+                {/* רשימת מבחנים */}
+                {filtered.length === 0 ? (
+                    <Box sx={{ textAlign: "center", mt: 6 }}>
+                        <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
+                            😕 {!user ? "התחברי כדי לראות את המבחנים שלך" : "אין לך מבחנים עדיין"}
+                        </Typography>
+                        {!user ? (
+                            <Button variant="contained" onClick={() => navigate("/login")}>התחברות</Button>
+                        ) : (
+                            <Button variant="contained" onClick={() => navigate("/create-exam")}>צור מבחן ראשון</Button>
+                        )}
+                    </Box>
+                ) : (
+                    <Stack spacing={2}>
+                        {filtered.map((exam) => (
+                            <Card
+                                key={exam._id}
+                                variant="outlined"
+                                sx={{
+                                    borderRadius: "12px",
+                                    overflow: "hidden",
+                                    transition: "transform 0.14s, box-shadow 0.14s",
+                                    "&:hover": { transform: "translateY(-4px)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" },
+                                }}
+                            >
+                                <CardContent sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 2 }, p: { xs: 1.5, md: 2 } }}>
 
-                                        <Box sx={{ flex: 1 }}>
-                                            <Stack direction="row" justifyContent="space-between" alignItems="center">
-                                                <Box>
-                                                    <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                                                        {exam.title}
-                                                    </Typography>
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        נושא: {exam.topic || "-"}
-                                                    </Typography>
-                                                </Box>
+                                    {/* Avatar - רק בדסקטופ */}
+                                    <Avatar
+                                        sx={{
+                                            display: { xs: "none", md: "flex" },
+                                            bgcolor: "#4a90a4",
+                                            width: 64,
+                                            height: 64,
+                                            fontWeight: 700,
+                                            fontSize: "1.05rem",
+                                        }}
+                                    >
+                                        {String(exam.title || "מבחן").slice(6, 7).toUpperCase()}
+                                    </Avatar>
 
-                                                <Stack direction="row" spacing={1} sx={{ pl: 2 }}>
-                                                    {/* <Chip label={exam.subject} color="primary" size="small" /> */}
-                                                    <Chip label={`כיתה ${exam.classroom}`} variant="outlined" size="small" />
-                                                </Stack>
-                                            </Stack>
-
-                                            <Divider sx={{ my: 1.2 }} />
-                                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                                                תאריך יצירה: {new Date(exam.createdAt).toLocaleDateString("he-IL")}
-                                            </Typography>
-
-                                        </Box>
-
-                                        <Stack direction="column" spacing={1} sx={{ ml: 1 }}>
-                                            <Tooltip title="צפה במבחן">
-                                                <Button
-                                                    variant="outlined"
-                                                    color="primary"
-                                                    onClick={() => navigate(`/export-exam/${exam._id}`)}
-                                                    startIcon={<Preview />}
-                                                    sx={{ minWidth: 42, color: SECONDARY_COLOR, borderColor: SECONDARY_COLOR }}
-                                                />
-                                            </Tooltip>
-
-                                            <Tooltip title="ערוך">
-                                                <Button
-                                                    variant="contained"
-                                                    color="secondary"
-                                                    onClick={() => navigate(`/edit-exam/${exam._id}`)}
-                                                    startIcon={<Edit />}
-                                                    sx={{ bgcolor: SECONDARY_COLOR, "&:hover": { bgcolor: "#5a8a92" } }}
-                                                />
-                                            </Tooltip>
-
-                                            <Tooltip title="מחק">
-                                                <Button
-                                                    variant="contained"
-                                                    color="error"
-                                                    onClick={() => handleDeleteClick(exam._id)}
-                                                    startIcon={<Delete />}
-                                                    sx={{ minWidth: 42, bgcolor: ACCENT_COLOR }}
-                                                />
-                                            </Tooltip>
+                                    {/* תוכן */}
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ minWidth: 0 }}>
+                                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                <Typography variant="h6" sx={{ fontWeight: 700 }} noWrap>
+                                                    {exam.title}
+                                                </Typography>
+                                                <Typography variant="body2" color="text.secondary" noWrap>
+                                                    נושא: {exam.topic || "-"}
+                                                </Typography>
+                                            </Box>
+                                            <Chip
+                                                label={`כיתה ${exam.classroom}`}
+                                                variant="outlined"
+                                                size="small"
+                                                sx={{ flexShrink: 0, ml: 1 }}
+                                            />
                                         </Stack>
-                                    </CardContent>
-                                </Card>
-                            ))}
-                        </Stack>
-                    )
-                }
+                                        <Divider sx={{ my: 1.2 }} />
+                                        <Typography variant="body2" color="text.secondary">
+                                            תאריך יצירה: {new Date(exam.createdAt).toLocaleDateString("he-IL")}
+                                        </Typography>
+                                    </Box>
 
-                {/* כפתור צף ליצור מבחן */}
+                                    {/* כפתורי פעולה */}
+                                    <Stack direction="column" spacing={1}>
+                                        <Tooltip title="צפה במבחן">
+                                            <IconButton
+                                                sx={{ color: SECONDARY_COLOR, width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                onClick={() => navigate(`/export-exam/${exam._id}`)}
+                                            >
+                                                <Preview sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="ערוך">
+                                            <IconButton
+                                                sx={{ bgcolor: SECONDARY_COLOR, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                onClick={() => navigate(`/edit-exam/${exam._id}`)}
+                                            >
+                                                <Edit sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                        <Tooltip title="מחק">
+                                            <IconButton
+                                                sx={{ bgcolor: ACCENT_COLOR, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                onClick={() => handleDeleteClick(exam._id)}
+                                            >
+                                                <Delete sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Stack>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Stack>
+                )}
+
+                {/* כפתור צף */}
                 <Tooltip title="יצירת מבחן חדש" placement="left">
                     <Fab
                         color="primary"
@@ -425,11 +384,8 @@ const MyTestsList = () => {
                     </Fab>
                 </Tooltip>
 
-                <Dialog
-                    open={deleteDialogOpen}
-                    onClose={() => setDeleteDialogOpen(false)}
-                    dir="rtl"
-                >
+                {/* דיאלוג מחיקה */}
+                <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} dir="rtl">
                     <DialogTitle>אישור מחיקה</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
@@ -437,16 +393,12 @@ const MyTestsList = () => {
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={() => setDeleteDialogOpen(false)} color="inherit">
-                            ביטול
-                        </Button>
-                        <Button onClick={confirmDelete} color="error" variant="contained">
-                            מחק
-                        </Button>
+                        <Button onClick={() => setDeleteDialogOpen(false)} color="inherit">ביטול</Button>
+                        <Button onClick={confirmDelete} color="error" variant="contained">מחק</Button>
                     </DialogActions>
                 </Dialog>
-            </Box >
-        </Box >
+            </Box>
+        </Box>
     );
 };
 

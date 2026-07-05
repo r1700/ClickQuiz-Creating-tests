@@ -18,7 +18,16 @@ import NavBar from './component/NavBar';
 import usePageTitle from './hooks/usePageTitle';
 import Footer from './component/Footer';
 import { Box } from '@mui/material';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+const theme = createTheme({
+    typography: {
+        h3: { fontSize: { xs: "1.8rem", md: "3rem" } },
+        h4: { fontSize: { xs: "1.4rem", md: "2.125rem" } },
+        h5: { fontSize: { xs: "1.1rem", md: "1.5rem" } },
+        h6: { fontSize: { xs: "1rem", md: "1.25rem" } },
+    },
+});
 
 function PrivateRoute({ children }) {
   const { user, isLoggedIn, loading } = React.useContext(AuthContext);
@@ -31,6 +40,7 @@ function App() {
   //  usePageTitle();
   return (
     <>
+    
       <AuthProvider>
         <Router>
           {/* <Sidebar /> */}

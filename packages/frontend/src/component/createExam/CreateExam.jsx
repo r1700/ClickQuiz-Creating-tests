@@ -16,7 +16,7 @@ export default function CreateExamMain() {
     return (
 
         <Box sx={{ display: "flex", justifyContent: "center", background: LIGHT_BG }}>
-            <Box sx={{ maxWidth: 700, width: "100%", p: 3, mt: 5 }}>
+            <Box sx={{ maxWidth: 700, width: "100%", p: 3, mt: { xs: 1, md: 5 } }}>
                 <Typography variant="h4" align="center" gutterBottom>
                     יצירת מבחן
                 </Typography>

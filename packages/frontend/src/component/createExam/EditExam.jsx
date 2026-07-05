@@ -57,9 +57,7 @@ export default function EditExam() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState(null);
   const [exam, setExam] = useState(null);
-  const { examId } = useParams();
-  console.log(examId);
-  
+  const { examId } = useParams();  
 
   // שינוי ערכים
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));

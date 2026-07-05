@@ -225,10 +225,7 @@ export default function Login() {
                                         navigate("/");
                                         // navigate("/get-my-exams");
                                     } catch (err) {
-                                        console.log("Google login error:", err);
-                                        console.log("🟡 Received idToken:", idToken.slice(0, 20));
-
-
+                                        console.error("Google login error:", err);
                                         alert(err.response?.data?.message || "שגיאה בהתחברות עם Google");
                                     }
                                 }}

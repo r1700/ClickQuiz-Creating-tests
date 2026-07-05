@@ -8,10 +8,10 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
     <Box ref={ref} sx={{
       fontFamily: "'Assistant', sans-serif",
       direction: "rtl",
-      width: "210mm",
-      minHeight: "297mm",
+      width: { xs: "100%", print: "210mm" },
+      minHeight: { xs: "auto", print: "297mm" },
       margin: "0 auto",
-      padding: "20mm 15mm",
+      padding: { xs: "10mm 8mm", print: "20mm 15mm" },
       backgroundColor: "#fff",
       color: "#000",
       boxSizing: "border-box",
@@ -53,7 +53,7 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
             ) : (
               view === "student" ? (
                 <Typography>
-                  ____________________________________________________<br/>
+                  ____________________________________________________<br />
                   ____________________________________________________
                 </Typography>
               ) : (

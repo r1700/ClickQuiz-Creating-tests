@@ -238,12 +238,11 @@ export default function Register() {
               <Typography sx={{ color: "#666", fontWeight: 500 }}>או</Typography>
             </Divider>
 
-            {/* 🔹 Google Register */}
+            {/*  Google Register */}
             <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const decoded = jwtDecode(credentialResponse.credential);
-                  console.log("👩‍🏫 Google user:", decoded);
                   const idToken = credentialResponse.credential;
                   try {
                     // שלח את ה־idToken לשרת
@@ -255,15 +254,10 @@ export default function Register() {
                     navigate("/");
                     // navigate("/get-my-exams");
                   } catch (err) {
-                    console.log("Google login error:", err);
-                    console.log("🟡 Received idToken:", idToken.slice(0, 20));
-
-
+                    console.error("Google login error:", err);
                     alert(err.response?.data?.message || "שגיאה בהתחברות עם Google");
                   }
-                  // setUser(decoded);
-                  // navigate("/");
-                  // navigate("/get-my-exams");
+
                 }}
                 onError={() => {
                   alert("שגיאה בהרשמה עם Google");

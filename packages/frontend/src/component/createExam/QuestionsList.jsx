@@ -75,11 +75,9 @@ export default function QuestionsList({ exam }) {
       // קריאה לשרת ליצירת השאלה במסד הנתונים
       const examId = exam._id;
       const res = await addQuestionService(examId, newQuestion);
-      console.log(" New question added:", res.data);
 
       // הוספה של השאלה החדשה ל-state עם הנתונים מהשרת (כולל _id)
       setQuestions(prevQuestions => [...prevQuestions, res.data]);
-      console.log("Questions after adding:", questions);
     } catch (err) {
       console.error("Error adding question", err);
     }
@@ -109,7 +107,6 @@ export default function QuestionsList({ exam }) {
   //   setIsEditing((prev) => ({ ...prev, [idx]: false }));
   // };
 
-  console.log("exam in QuestionsList:", exam);
 
 
   return (
@@ -241,9 +238,7 @@ export default function QuestionsList({ exam }) {
         type="submit"
         fullWidth
         sx={{ py: 1.5 }}
-        onClick={() => {
-          console.log("Navigating to export exam with id:", exam._id);
-          
+        onClick={() => {          
           navigate(`/export-exam/${exam._id}`, { state: { exam: exam } });
         }}
       >אישור</Button>

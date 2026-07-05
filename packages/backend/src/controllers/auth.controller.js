@@ -22,7 +22,6 @@ const COOKIE_OPTIONS = {
 
 export const register = async (req, res) => {
     try {
-        console.log("📦 Request body:", req.body);
         const { name, email, password } = req.body;
         if (!email || !password || !name) return res.status(400).json({ message: "Missing fields" });
         const exists = await User.findOne({ email });
@@ -45,8 +44,6 @@ export const register = async (req, res) => {
 // login
 export const login = async (req, res) => {
     try {
-        console.log("😊Cookies:", req.cookies);
-        console.log("😊Decoded user:", req.user);
         const { email, password } = req.body;
         if (!email || !password) return res.status(400).json({ message: "Missing fields" });
 

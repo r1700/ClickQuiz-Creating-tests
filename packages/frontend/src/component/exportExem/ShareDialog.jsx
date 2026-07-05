@@ -9,7 +9,6 @@ import { uploadPdf } from "../../services/pdf.services";
 const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
 
 const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
-    console.log(previewRef.current);
 
     const [shareLinks, setShareLinks] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -63,7 +62,6 @@ const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
             setSnackbar({ open: true, message: "המייל נשלח בהצלחה!" });
             setEmail("");
         } catch (err) {
-            console.error(err);
             setSnackbar({ open: true, message: "שגיאה בשליחת המייל" });
         } finally { setEmailSending(false); }
     };

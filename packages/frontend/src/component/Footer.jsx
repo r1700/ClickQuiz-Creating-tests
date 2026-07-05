@@ -7,7 +7,13 @@ const SECONDARY_COLOR = "#14B0FF";
 export default function Footer() {
     return (
         <Box sx={{ mt: "auto", background: `linear-gradient(135deg, ${PRIMARY_COLOR}, ${SECONDARY_COLOR})`, color: "white", py: 5 }}>
-            <Container sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Container sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 2
+            }}>
                 <Typography variant="body2">© 2025 ClickQuiz - כל הזכויות שמורות</Typography>
                 <Box>
                     <Button color="inherit" onClick={() => document.getElementById("about-section")?.scrollIntoView({ behavior: "smooth" })}>

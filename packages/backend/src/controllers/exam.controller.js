@@ -9,7 +9,6 @@ dotenv.config();
 // ✅ יצירת מבחן חדש
 export const createExam = async (req, res) => {
     try {
-        console.log("Creating exam with data:", req.body);
 
         const { title, subject, classroom, level, questions, topic } = req.body;
         const exam = new Exam({
@@ -24,7 +23,7 @@ export const createExam = async (req, res) => {
         const savedExam = await exam.save();
         res.status(201).json(savedExam);
     } catch (err) {
-        console.log("Error creating exam:", err);
+        console.error("Error creating exam:", err);
 
         res.status(400).json({ error: err.message });
     }
@@ -43,7 +42,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
 export const createExamAI = async (req, res) => {
     try {
-        console.log("Creating examAI with data:", req.body);
 
         const { title, subject, topic, classroom, level, numQuestions, questionTypes } = req.body;
 
@@ -67,7 +65,6 @@ export const createExamAI = async (req, res) => {
         //     messages: [{ role: "user", content: prompt }],
         //     temperature: 0.7
         // });
-        // console.log("AI response:🎉🎉", response);
 
         // let aiText = response.choices[0].message.content;
 
@@ -113,10 +110,7 @@ export const createExamAI = async (req, res) => {
 export const getExamsForUser = async (req, res) => {
     try {
         if (!req.user?.id) return res.status(401).json({ message: "Unauthorized" });
-        console.log("❤️❤️❤️❤️❤️Fetching exams for user ID:", req.user.id);
-
         const exams = await Exam.find({ userId: req.user.id }).lean();
-        console.log("Fetched exams for user:", exams);
         res.json(exams);
     } catch (err) {
         res.status(500).json({ error: err.message });

@@ -62,7 +62,6 @@ export const getExamsServiceByUser = async () => {
     const res = await axios.get(`${BASE_URL}/exams/get-my-exams`, {
       withCredentials: true
     });
-    // console.log(res.data);
     
     return res;
   } catch (error) {
@@ -76,11 +75,8 @@ export const deleteExamService = async (examId) => {
     const res = await axios.delete(`${BASE_URL}/exams/delete/${examId}`, {
       withCredentials: true
     });
-    // console.log(res.data);  
     return res;
   } catch (error) {
-    console.log("🚨 Error deleting exam:", error);
-    
     return error.response?.status;
   }
 };
