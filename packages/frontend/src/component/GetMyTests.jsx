@@ -29,7 +29,8 @@ import { useNavigate } from "react-router-dom";
 import { Preview, Edit, Delete } from "@mui/icons-material";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { deleteExamService } from "../services/Exam.services";
-
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 // צבעים
 const PRIMARY_COLOR = "#002275";
@@ -38,6 +39,7 @@ const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
 
 const MyTestsList = () => {
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [exams, setExams] = useState([]);
     const [filtered, setFiltered] = useState([]);
@@ -76,24 +78,30 @@ const MyTestsList = () => {
     };
 
     useEffect(() => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         const fetchExams = async () => {
             try {
                 const res = await getExamsServiceByUser();
                 setExams(res.data);
                 setFiltered(res.data);
             } catch (err) {
-                if (err.response?.status === 401) {
-                    setError("את לא מחוברת. התחברי כדי לראות את המבחנים שלך.");
-                } else {
+                // if (err.response?.status === 401) {
+                //     setExams([]);
+                //     setFiltered([]);
+                    // setError("את לא מחוברת. התחברי כדי לראות את המבחנים שלך.");
+                // } else {
                     setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
-                }
+                // }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchExams();
-    }, []);
+    }, [user]);
 
     // סינון
     useEffect(() => {
@@ -297,11 +305,16 @@ const MyTestsList = () => {
                     filtered.length === 0 ? (
                         <Box sx={{ textAlign: "center", mt: 6, maxWidth: 1100 }}>
                             <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
-                                😕 לא נמצאו מבחנים התואמים לחיפוש שלך
-                            </Typography>
-                            <Button variant="contained" onClick={() => navigate("/create-exam")}>
-                                צור מבחן ראשון
-                            </Button>
+                                😕 {exams.length === 0
+                                    ? "התחברי כדי לראות את המבחנים שלך"
+                                    : "לא נמצאו מבחנים התואמים לחיפוש שלך"}                            </Typography>
+                            {exams.length === 0 ? (
+                                <Button variant="contained" onClick={() => navigate("/login")}>
+                                    התחברות
+                                </Button>) : (
+                                <Button variant="contained" onClick={() => navigate("/create-exam")}>
+                                    צור מבחן ראשון
+                                </Button>)}
                         </Box>
                     ) : (
                         <Stack spacing={2}>
@@ -360,7 +373,7 @@ const MyTestsList = () => {
                                                     color="primary"
                                                     onClick={() => navigate(`/export-exam/${exam._id}`)}
                                                     startIcon={<Preview />}
-                                                    sx={{ minWidth: 42 ,color: SECONDARY_COLOR,borderColor:SECONDARY_COLOR }}
+                                                    sx={{ minWidth: 42, color: SECONDARY_COLOR, borderColor: SECONDARY_COLOR }}
                                                 />
                                             </Tooltip>
 
@@ -380,7 +393,7 @@ const MyTestsList = () => {
                                                     color="error"
                                                     onClick={() => handleDeleteClick(exam._id)}
                                                     startIcon={<Delete />}
-                                                    sx={{ minWidth: 42,bgcolor:ACCENT_COLOR  }}
+                                                    sx={{ minWidth: 42, bgcolor: ACCENT_COLOR }}
                                                 />
                                             </Tooltip>
                                         </Stack>

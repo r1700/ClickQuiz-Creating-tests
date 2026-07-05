@@ -19,7 +19,9 @@ export const login = async (data) => {
 };
 export const register = async (data) => {
     try {
-        const res = await axios.post(`${API_URL}/auth/register`, data);
+        const res = await axios.post(`${API_URL}/auth/register`, data, {
+            withCredentials: true
+        });
         return res.data;
     } catch (error) {
         console.error("❌ שגיאה בהרשמה:", error);
@@ -28,9 +30,9 @@ export const register = async (data) => {
 };
 export const logout = async () => {
     try {
-        const res = await axios.post(`${API_URL}/auth/logout`,{}, {
-      withCredentials: true,
-    });
+        const res = await axios.post(`${API_URL}/auth/logout`, {}, {
+            withCredentials: true,
+        });
         return res.data;
     } catch (error) {
         console.error("❌ שגיאה ביציאה:", error);
@@ -39,15 +41,15 @@ export const logout = async () => {
 };
 
 export const me = async () => {
-  try {
-    const res = await axios.get(`${API_URL}/auth/me`, {
-      withCredentials: true, // חשוב לשלוח cookies לשרת
-    });
-    return res.data;
-  } catch (error) {
-    console.error("❌ שגיאה בקבלת פרטי המשתמש:", error);
-    throw error;
-  }
+    try {
+        const res = await axios.get(`${API_URL}/auth/me`, {
+            withCredentials: true, // חשוב לשלוח cookies לשרת
+        });
+        return res.data;
+    } catch (error) {
+        console.error("❌ שגיאה בקבלת פרטי המשתמש:", error);
+        throw error;
+    }
 };
 
 
@@ -78,7 +80,7 @@ export const resetPassword = async (token, newPassword) => {
 export const loginWithGoogle = async (googleUser) => {
     try {
         // לדוגמה: { email, name, picture, sub (googleId) }
-        const res = await axios.post(`${API_URL}/auth/google-login`, googleUser,{
+        const res = await axios.post(`${API_URL}/auth/google-login`, googleUser, {
             withCredentials: true, // חשוב לשלוח cookies לשרת
         });
         return res.data;

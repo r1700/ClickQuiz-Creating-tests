@@ -23,8 +23,8 @@ app.use(cookieParser());
 
 // חיבור ל‑MongoDB
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected!"))
-  .catch(err => console.error(err));
+  .then(() => console.log("MongoDB connected!✅"))
+  .catch(err => console.error("Error connecting to MongoDB❌:", err));
 
   app.get("/api/auth/logout", (req, res) => {
   res.clearCookie("token", { path: "/" });

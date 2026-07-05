@@ -105,6 +105,7 @@ export default function Register() {
     setLoading(true);
     try {
       const user = await register(form);
+      setUser(null);  
       setUser(user);
       setSuccess("נרשמת בהצלחה!");
       setTimeout(() => navigate("/"), 800);

@@ -9,10 +9,18 @@ export const createExamAIService = async (payload) => {
             timeout: 120000,
             withCredentials: true,
         });
-        return res;
-    }
-    catch (error) {
-        return error.res.status;
+        return {
+            status: res.status,
+            data: res.data,
+            isError: false,
+        };
+    } catch (error) {
+        return {
+            status: error.response?.status || 500,
+            data: error.response?.data,
+            message: error.response?.data?.error || error.response?.data?.message || error.message,
+            isError: true,
+        };
     }
 }
 

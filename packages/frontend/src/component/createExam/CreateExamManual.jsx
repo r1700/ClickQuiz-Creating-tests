@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box, Card, CardContent, Typography, TextField, Button, Alert, CircularProgress, Stack,
 } from "@mui/material";
 import QuestionsList from "./QuestionsList";
 import { createExamManualService } from "../../services/Exam.services";
-
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // צבעים
 const PRIMARY_COLOR = "#002275";
@@ -35,12 +36,15 @@ const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
 );
 
 export default function CreateExamManual() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
     subject: "",
     classroom: "",
     topic: "",
   });
+  const [guestWarning, setGuestWarning] = useState(false);
   const [examId, setExamId] = useState(null);
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -61,6 +65,11 @@ export default function CreateExamManual() {
   };
   // יצירת מבחן
   const handleCreateExam = async () => {
+    if (!user) {
+      setGuestWarning(true);
+      return;
+    }
+    setGuestWarning(false);
     setMessage(null);
     if (!form.subject || !form.classroom) {
       setMessage({ type: "error", text: "אנא מלאי מקצוע וכיתה לפני יצירה." });
@@ -143,7 +152,7 @@ export default function CreateExamManual() {
             value={form.topic}
             onChange={(e) => handleChange("topic", e.target.value)}
           />
-          
+
           <LabeledField
             label="כיתה"
             value={form.classroom}
@@ -167,7 +176,19 @@ export default function CreateExamManual() {
               איפוס
             </Button>
           </Stack>
-
+        {/* שגיאת אורח - עליך להתחבר}*/}
+          {guestWarning && (
+            <Box sx={{
+              mt: 2, p: 1.5, bgcolor: "#fff3e0", borderRadius: 2,
+              border: "1px solid #FFB300", display: "flex",
+              justifyContent: "space-between", alignItems: "center",
+            }}>
+              <span>עליך להתחבר כדי ליצור מבחן</span>
+              <Button size="small" variant="outlined" color="warning" onClick={() => navigate("/login")}>
+                התחברות
+              </Button>
+            </Box>
+          )}
           {message && (
             <Alert severity={message.type} sx={{ mt: 1, fontSize: "1.05rem" }}>
               {message.text}

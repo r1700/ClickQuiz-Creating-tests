@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Box, Card, CardContent, Typography, TextField, Button, FormControl, FormGroup, FormControlLabel, Checkbox, Select, MenuItem, Alert, Stack, CircularProgress,
 } from "@mui/material";
@@ -6,7 +6,8 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import { createExamAIService } from "../../services/Exam.services";
 import QuestionsList from "./QuestionsList";
-
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // צבעים
 const PRIMARY_COLOR = "#002275";
@@ -48,6 +49,9 @@ const ExamInfoBox = ({ label, value, color, bg }) => (
 );
 
 export default function CreateExamAI() {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "מבחן",
     subject: "",
@@ -59,9 +63,10 @@ export default function CreateExamAI() {
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [guestWarning, setGuestWarning] = useState(false);
   const [createdExam, setCreatedExam] = useState(null);
 
-  // שינוי ערכים בטופס
+
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const handleCheckboxChange = (e) => {
@@ -83,16 +88,21 @@ export default function CreateExamAI() {
       questionTypes: { mcq: true, open: false },
     });
     setMessage(null);
+    setGuestWarning(false);
     setCreatedExam(null);
   };
 
-  // שליחת טופס
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!user) {
+      setGuestWarning(true);
+      return;
+    }
+
+    setGuestWarning(false);
     setMessage(null);
     setCreatedExam(null);
-
-    handleChange("title", `מבחן ב${form.subject}`);
 
     if (!form.subject || !form.topic || !form.classroom) {
       setMessage({ type: "error", text: "אנא מלאי את כל השדות החיוניים." });
@@ -113,9 +123,24 @@ export default function CreateExamAI() {
       };
 
       const res = await createExamAIService(payload);
+      if (res.isError) {
+        if (res.status === 429) {
+          setMessage({ type: "error", text: "❌ לא ניתן ליצור מבחן כרגע - אין טוקנים זמינים." });
+        } else if (res.status === 500) {
+          setMessage({ type: "error", text: `❌ שגיאה בשרת: ${res.message || "נסי שוב מאוחר יותר"}` });
+        } else {
+          setMessage({ type: "error", text: `❌ ${res.message || "שגיאה לא צפויה ביצירת המבחן"}` });
+        }
+        return;
+      }
+
       setCreatedExam(res.data);
       setMessage({ type: "success", text: "✅ המבחן נוצר בהצלחה!" });
     } catch (err) {
+      if (err.response?.status === 429) {
+        setMessage({ type: "error", text: "❌ לא ניתן ליצור מבחן כרגע - אין טוקנים זמינים." });
+        return;
+      }
       const errMsg =
         err?.response?.data?.error ||
         err?.response?.data?.message ||
@@ -127,13 +152,11 @@ export default function CreateExamAI() {
     }
   };
 
-  // צבע רמת קושי
   const getLevelColor = () =>
-    form.level === "קל"
-      ? "#388e3c"
-      : form.level === "בינוני"
-        ? "#f57c00"
-        : "#d32f2f";
+    form.level === "קל" ? "#388e3c" : form.level === "בינוני" ? "#f57c00" : "#d32f2f";
+  
+  const GetLevelHebrow = (level) =>
+     level === "easy" ? "קל" : level === "medium" ? "בינוני" : "קשה";
 
   return (
     <Box
@@ -147,7 +170,6 @@ export default function CreateExamAI() {
         direction: "rtl",
       }}
     >
-      {/* כרטיס יצירת מבחן */}
       <Card
         sx={{
           width: "100%",
@@ -163,12 +185,7 @@ export default function CreateExamAI() {
           <Typography
             variant="h4"
             align="center"
-            sx={{
-              mb: 3,
-              color: PRIMARY_COLOR,
-              letterSpacing: 1,
-              textShadow: "0 2px 8px #e3e8ff",
-            }}
+            sx={{ mb: 3, color: PRIMARY_COLOR, letterSpacing: 1, textShadow: "0 2px 8px #e3e8ff" }}
           >
             יצירת מבחן חדש
           </Typography>
@@ -179,13 +196,11 @@ export default function CreateExamAI() {
               value={form.subject}
               onChange={(e) => handleChange("subject", e.target.value)}
             />
-
             <LabeledField
               label="נושא"
               value={form.topic}
               onChange={(e) => handleChange("topic", e.target.value)}
             />
-
             <LabeledField
               label="כיתה"
               value={form.classroom}
@@ -193,18 +208,11 @@ export default function CreateExamAI() {
             />
 
             <FormControl fullWidth sx={{ mb: 2 }}>
-              <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>
-                רמת קושי
-              </Typography>
+              <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>רמת קושי</Typography>
               <Select
                 value={form.level}
                 onChange={(e) => handleChange("level", e.target.value)}
-                sx={{
-                  color: getLevelColor(),
-                  borderRadius: 2,
-                  background: "#f5f7fa",
-                  fontWeight: "400",
-                }}
+                sx={{ color: getLevelColor(), borderRadius: 2, background: "#f5f7fa" }}
               >
                 <MenuItem value="קל" sx={{ color: "#388e3c", direction: "rtl" }}>קל</MenuItem>
                 <MenuItem value="בינוני" sx={{ color: "#f57c00", direction: "rtl" }}>בינוני</MenuItem>
@@ -219,7 +227,6 @@ export default function CreateExamAI() {
               onChange={(e) => handleChange("numQuestions", Number(e.target.value))}
             />
 
-            {/* סוגי שאלות */}
             <FormGroup sx={{ mb: 2 }}>
               {[
                 { name: "mcq", label: "שאלות בחירה", color: "#1976d2" },
@@ -234,10 +241,7 @@ export default function CreateExamAI() {
                       name={type.name}
                       icon={<CheckBoxOutlineBlankIcon />}
                       checkedIcon={<CheckBoxIcon />}
-                      sx={{
-                        color: type.color,
-                        "&.Mui-checked": { color: type.color },
-                      }}
+                      sx={{ color: type.color, "&.Mui-checked": { color: type.color } }}
                     />
                   }
                   label={type.label}
@@ -245,9 +249,8 @@ export default function CreateExamAI() {
               ))}
             </FormGroup>
 
-            {/* כפתורים */}
             <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
-              <Button type="submit" variant="contained"  disabled={loading || !form.subject || !form.classroom || !form.topic } fullWidth>
+              <Button type="submit" variant="contained" disabled={loading || !form.subject || !form.classroom || !form.topic} fullWidth>
                 {loading ? <CircularProgress size={20} /> : "יצירת מבחן"}
               </Button>
               <Button variant="text" fullWidth onClick={resetForm}>
@@ -256,6 +259,26 @@ export default function CreateExamAI() {
             </Stack>
           </Box>
 
+          {/* הודעת אורח */}
+          {guestWarning && (
+            <Box sx={{
+              mt: 2,
+              p: 1.5,
+              bgcolor: "#fff3e0",
+              borderRadius: 2,
+              border: "1px solid #FFB300",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+              <span>עליך להתחבר כדי ליצור מבחן</span>
+              <Button size="small" variant="outlined" color="warning" onClick={() => navigate("/login")}>
+                התחברות
+              </Button>
+            </Box>
+          )}
+
+          {/* הודעות כלליות */}
           {message && (
             <Alert severity={message.type} sx={{ mt: 2, fontSize: "1.05rem" }}>
               {message.text}
@@ -264,49 +287,21 @@ export default function CreateExamAI() {
         </CardContent>
       </Card>
 
-      {/* תצוגת מבחן שנוצר */}
       {createdExam && (
         <Box sx={{ mt: 4, width: "100%", maxWidth: 540 }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{
-              color: "#283593",
-              textShadow: "0 2px 8px #e3e8ff",
-              mb: 2,
-            }}
-          >
+          <Typography variant="h6" gutterBottom sx={{ color: "#283593", textShadow: "0 2px 8px #e3e8ff", mb: 2 }}>
             תצוגת המבחן שנוצר
           </Typography>
 
-          <Card
-            variant="outlined"
-            sx={{
-              bgcolor: "#f9f9ff",
-              mb: 3,
-              borderRadius: 3,
-              border: "2px solid #90caf9",
-              boxShadow: "0 2px 12px #e3e8ff",
-            }}
-          >
+          <Card variant="outlined" sx={{ bgcolor: "#f9f9ff", mb: 3, borderRadius: 3, border: "2px solid #90caf9", boxShadow: "0 2px 12px #e3e8ff" }}>
             <CardContent>
               <Stack spacing={1.5}>
-                <Typography variant="h6" sx={{ color: "#1a237e" }}>
-                  {createdExam.title}
-                </Typography>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "space-between",
-                    gap: 1,
-                  }}
-                >
+                <Typography variant="h6" sx={{ color: "#1a237e" }}>{createdExam.title}</Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: 1 }}>
                   <ExamInfoBox label="מקצוע" value={createdExam.subject} color="#1565c0" bg="#e3f2fd" />
                   <ExamInfoBox label="כיתה" value={createdExam.classroom} color="#ef6c00" bg="#fff3e0" />
-                  <ExamInfoBox label="רמת קושי" value={createdExam.level} color="#2e7d32" bg="#e8f5e9" />
-                  <ExamInfoBox label="מספר שאלות" value={createdExam.numQuestions} color="#9a1b1b" bg="#fbe9e7" />
+                  <ExamInfoBox label="רמת קושי" value={GetLevelHebrow(createdExam.level)} color="#2e7d32" bg="#e8f5e9" />
+                  <ExamInfoBox label="מספר שאלות" value={createdExam.questions.length} color="#9a1b1b" bg="#fbe9e7" />
                 </Box>
               </Stack>
             </CardContent>

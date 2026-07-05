@@ -2,6 +2,7 @@
 
 import Exam from "../models/Exam.js";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -10,12 +11,13 @@ export const createExam = async (req, res) => {
     try {
         console.log("Creating exam with data:", req.body);
 
-        const { title, subject, classroom, level, questions } = req.body;
+        const { title, subject, classroom, level, questions, topic } = req.body;
         const exam = new Exam({
             title,
             subject,
             classroom,
             level,
+            topic,
             questions: questions || [], // אם רוצים, אפשר לשלוח שאלות כבר ביצירה
             userId: req.user.id
         });
@@ -29,9 +31,16 @@ export const createExam = async (req, res) => {
 };
 
 // יצירת מבחן חדש עם שאלות שנוצרו על ידי AI
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+
+// ---OPEN_AI
+//  const openai = new OpenAI({
+//     apiKey: process.env.OPENAI_API_KEY
+// });
+
+// ---GOOGLE GEMINI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
 export const createExamAI = async (req, res) => {
     try {
         console.log("Creating examAI with data:", req.body);
@@ -51,14 +60,21 @@ export const createExamAI = async (req, res) => {
                 - answer
                 Do NOT include explanations, markdown, or extra text. Return valid JSON only.
                 `;
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.7
-        });
 
-        let aiText = response.choices[0].message.content;
+        //---OPEN_AI
+        // const response = await openai.chat.completions.create({
+        //     model: "gpt-4o-mini",
+        //     messages: [{ role: "user", content: prompt }],
+        //     temperature: 0.7
+        // });
+        // console.log("AI response:🎉🎉", response);
 
+        // let aiText = response.choices[0].message.content;
+
+        //---  GOOGLE GEMINI
+        const result = await model.generateContent(prompt);
+        let aiText = result.response.text();
+        
         // הסרה של ```json ... ``` אם קיים
         aiText = aiText.replace(/```json|```/g, "").trim();
         let questions = [];
@@ -73,6 +89,9 @@ export const createExamAI = async (req, res) => {
             }));
         } catch (err) {
             console.error("Failed to parse AI response:", err);
+            if (err.status === 429)
+                
+                return res.status(429).json({ error: "Not tokens available." });
             return res.status(500).json({ error: "AI did not return valid JSON." });
         }
 
@@ -82,7 +101,10 @@ export const createExamAI = async (req, res) => {
 
         res.status(201).json(savedExam);
     } catch (err) {
-        console.error(err);
+        console.error("Error creating examAI❌:", err);
+        if (err.status === 429) {            
+            return res.status(429).json({ error: "Not tokens available." });
+        }
         res.status(500).json({ error: err.message });
     }
 };

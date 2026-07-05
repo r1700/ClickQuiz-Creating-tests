@@ -74,7 +74,7 @@ export const logout = (req, res) => {
         cookiesToClear.forEach(name => {
             res.clearCookie(name, {
                 httpOnly: true,          // במיוחד ל-token
-                sameSite: "none",        // או "lax" לפי הצורך שלך
+                sameSite: "lax",        // או "lax" לפי הצורך שלך
                 secure: process.env.NODE_ENV === "production",
                 path: "/",               // חשוב למחוק ב-path הנכון
             });
