@@ -280,6 +280,7 @@ const HomePage = () => {
                     {[
                         { name: "ד\"ר רונית כהן", text: "חיסכון בזמן והנאה רבה של התלמידים." },
                         { name: "נועה לוי", text: "כלי פשוט שמקל על העבודה היומיומית." },
+                        { name: "שרה כ.", text: "מערכת מושלמת לניהול מבחנים ועבודה בצוות." },
                     ].map((t, i) => (
                         <Grid item xs={12} md={5} key={i}>
                             <Grow in={mounted} style={{ transitionDelay: `${380 + i * 120}ms` }}>
@@ -294,22 +295,6 @@ const HomePage = () => {
                 </Grid>
             </Container>
 
-            {/* Footer */}
-            <Box sx={{ bgcolor: "#ffffff", borderTop: "1px solid #e6eefb", py: 3, mt: 6 }}>
-                <Container maxWidth="lg">
-                    <Grid container alignItems="center">
-                        <Grid item xs={12} md={6}>
-                            <Typography variant="body2" color="text.secondary">© {new Date().getFullYear()} ClickQuiz</Typography>
-                        </Grid>
-                        <Grid item xs={12} md={6} sx={{ textAlign: { xs: "right", md: "left" } }}>
-                            <Stack direction="row" spacing={2} justifyContent="flex-end">
-                                <Button variant="text" sx={{ color: "text.secondary" }}>תנאי שימוש</Button>
-                                <Button variant="text" sx={{ color: "text.secondary" }}>מדיניות פרטיות</Button>
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Container>
-            </Box>
         </Box>
     );
 };

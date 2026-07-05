@@ -84,15 +84,18 @@ export default function Login() {
         try {
             const user = await login(form);
             setUser(user);
-           
+
             setSuccess("התחברת בהצלחה!");
             // setTimeout(() => navigate("/dashboard"), 800);
             // setTimeout(() => navigate("/get-my-exams"), 800);
             setTimeout(() => navigate("/"), 800);
         } catch (e) {
-            const msg = e.response?.data?.message || "משתמשת לא קיימת";
-            setGlobalErr(msg);
-            if (msg.includes("לא קיימת")) {
+            const msg = e.response?.data?.message;
+            const hebrewMsg = msg === "Invalid credentials"
+                ? "שם משתמש או סיסמה שגויים"
+                : msg || "שגיאה בהתחברות";
+            setGlobalErr(hebrewMsg);
+            if (msg.includes("שם משתמש או סיסמה שגויים")) {
                 setTimeout(() => navigate("/register"), 1500);
             }
         } finally {

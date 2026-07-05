@@ -16,6 +16,7 @@ import HomePage from './component/HomePage';
 import HomePageAnimated from './component/HomePage copy';
 import NavBar from './component/NavBar';
 import usePageTitle from './hooks/usePageTitle';
+import Footer from './component/Footer';
 
 
 function PrivateRoute({ children }) {
@@ -48,6 +49,7 @@ function App() {
             <Route path="/" element={<PrivateRoute><CreateExamMain /></PrivateRoute>} />
           </Routes>
         </Router>
+        <Footer />
       </AuthProvider>
     </>
   );

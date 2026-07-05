@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Logo from "../assets/quiz.png";
 import { AppBar, Avatar, Box, Button, Container, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
+import Cookies from "js-cookie";
 
 
 
@@ -17,23 +18,30 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     const scrollToElement = (id) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+        if (window.location.pathname !== "/") {
+            navigate("/");
+            setTimeout(() => {
+                document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+            }, 300);
+        } else {
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
         }
     };
+
     // תפריט משתמש
     const [editDialogOpen, setEditDialogOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
     const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
-  
+
 
     const handleLogout = async () => {
         try {
-             console.log(user);
+            console.log(user);
             console.log(isLoggedIn);
             await LogOut();
+            Cookies.remove("token"); 
+            Cookies.remove("userName");
             // user = null;
             // isLoggedIn = false;
             console.log(user);
@@ -53,7 +61,7 @@ const NavBar = () => {
                 <Container>
                     <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
                         <Box display="flex" alignItems="center" gap={2}>
-                            <img src={Logo} alt="ClickQuiz logo" style={{ width: 140 }} />
+                            <img src={Logo} alt="ClickQuiz logo" style={{ width: 140, cursor: "pointer" }} onClick={() => navigate("/")} />
                             <Typography variant="subtitle1" color="text.secondary">יצירת מבחנים מהירה ומקצועית</Typography>
                         </Box>
                         <Box>
@@ -113,7 +121,7 @@ const NavBar = () => {
                         </Box>
                     )}
                 </Container>
-            </AppBar>
+            </AppBar>          
         </Box>
     );
 };

@@ -138,8 +138,10 @@ const features = [
 
 const testimonials = [
     { name: "רבקה מ.", text: "מערכת חכמה שמקצרת לי שעות עבודה מדי שבוע." },
-    { name: "גלית ל.", text: "מעולה — AI שיודע לייצר שאלות מותאמות." },
+    { name: "גלית ל.", text: "מעולה - AI שיודע לייצר שאלות מותאמות." },
     { name: "שרון פ.", text: "שיתוף מהיר עם תלמידים בעזרת QR וקישור." },
+    { name: "שרה כ.", text: "מערכת מושלמת לניהול מבחנים ועבודה בצוות." },
+    { name: "נועה לוי", text: "כלי פשוט שמקל על העבודה היומיומית." },
 ];
 
 // Component
@@ -174,14 +176,14 @@ const HomePageAnimatedStyled = () => {
 
     return (
         <Box sx={{ direction: "rtl", background: LIGHT_BG, minHeight: "100vh", pb: 8, marginTop: 0 }}>
-            <Button sx={{ mt: 2, ml: 2 }} onClick={() => funcClearCookies()}>נקה עוגיות</Button>
+            {/* <Button sx={{ mt: 2, ml: 2 }} onClick={() => funcClearCookies()}>נקה עוגיות</Button> */}
             {/* Hero */}
             <Container maxWidth="lg">
                 <Hero sx={{ mt: 2, animation: `${fadeIn} .7s ease-out` }}>
                     <FloatingShape top="10%" left="5%" size="180px" opacity={0.15} />
                     <FloatingShape top="40%" left="70%" size="250px" opacity={0.1} />
 
-                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1.06 }}>{`יצירת מבחנים מקצועית — בפחות זמן`}</Typography>
+                    <Typography variant="h3" sx={{ fontWeight: 800, lineHeight: 1.06 }}>{`יצירת מבחנים מקצועית - בפחות זמן`}</Typography>
                     <Typography sx={{ mt: 2, color: "rgba(255,255,255,0.92)" }}>
                         השתמשי ב‑AI ליצירת שאלות אוטומטית, סדרי וערכי מבחנים בקלות, ושיתפי עם תלמידות מהשיעור.
                     </Typography>
@@ -244,22 +246,22 @@ const HomePageAnimatedStyled = () => {
                                 fontSize: "1.05rem",
                             }}
                         >
-                            הרעיון ל־ClickQuiz נולד מתוך צורך אמיתי של מורות ואנשי חינוך —
+                            הרעיון ל־ClickQuiz נולד מתוך צורך אמיתי של מורות ואנשי חינוך -
                             לחסוך את הזמן היקר שמתבזבז על בניית מבחנים ושאלונים בצורה ידנית.
                             במהלך העבודה בבתי ספר ובפרויקטים חינוכיים גילינו עד כמה התהליך הזה
                             גוזל אנרגיה, ומשאיר פחות זמן להתמקדות בהוראה עצמה.
                             <br /><br />
                             מתוך ההבנה הזו החלטנו לפתח מערכת שתשלב בין טכנולוגיה מתקדמת ליצירתיות
                             חינוכית. המטרה שלנו הייתה לבנות כלי פשוט, מהיר ונגיש שיאפשר לכל מורה
-                            ליצור מבחנים איכותיים תוך דקות — בעזרת בינה מלאכותית שמבינה את צרכי ההוראה.
+                            ליצור מבחנים איכותיים תוך דקות - בעזרת בינה מלאכותית שמבינה את צרכי ההוראה.
                             <br /><br />
                             ClickQuiz פותחה מתוך אהבה לעולם החינוך והרצון להקל על מורות
                             ומורים בכל שלב בעבודתם. המערכת מאפשרת ליצור שאלות מותאמות לפי נושא ורמה,
                             לערוך מבחנים קיימים, לשמור, לשתף ולהפיק גרסאות להדפסה או שליחה דיגיטלית.
                             <br /><br />
-                            החזון שלנו הוא להמשיך ולפתח את ClickQuiz כך שתהפוך לכלי מרכזי בעבודת ההוראה —
+                            החזון שלנו הוא להמשיך ולפתח את ClickQuiz כך שתהפוך לכלי מרכזי בעבודת ההוראה -
                             כזה שמחבר בין פדגוגיה, חדשנות וטכנולוגיה.
-                            אנחנו מאמינים שכל מורה ראויה לכלים חכמים שיחסכו זמן ויאפשרו לה להתמקד במה שבאמת חשוב —
+                            אנחנו מאמינים שכל מורה ראויה לכלים חכמים שיחסכו זמן ויאפשרו לה להתמקד במה שבאמת חשוב -
                             בלמידה ובהשראה.
                         </Typography>
                     </Container>
@@ -282,17 +284,7 @@ const HomePageAnimatedStyled = () => {
                 </Box>
             </Container>
 
-            {/* Footer */}
-            <Box sx={{ mt: 8, background: `linear-gradient(135deg, ${PRIMARY_COLOR}, ${SECONDARY_COLOR})`, color: "white", py: 5 }}>
-                <Container sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <Typography variant="body2">© 2025 ClickQuiz — כל הזכויות שמורות</Typography>
-                    <Box>
-                        <Button color="inherit">אודות</Button>
-                        <Button color="inherit">פרטיות</Button>
-                        <Button color="inherit">צור קשר</Button>
-                    </Box>
-                </Container>
-            </Box>
+           
         </Box>
     );
 };
