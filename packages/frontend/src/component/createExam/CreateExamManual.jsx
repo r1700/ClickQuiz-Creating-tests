@@ -12,7 +12,8 @@ const PRIMARY_COLOR = "#002275";
 const SECONDARY_COLOR = "#14B0FF";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
-// --- רכיב עזר לשדה טקסט עם תווית מעל ---
+
+// --- Text field helper with label above---
 const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
   <Box sx={{ mb: 2 }}>
     <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>{label}</Typography>
@@ -49,10 +50,10 @@ export default function CreateExamManual() {
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // שינוי ערכים
+  // change field value
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  // איפוס טופס
+  // reset form
   const resetForm = () => {
     setForm({
       title: "מבחן",
@@ -63,7 +64,7 @@ export default function CreateExamManual() {
     setMessage(null);
     setExamId(null);
   };
-  // יצירת מבחן
+  // create exam
   const handleCreateExam = async () => {
     if (!user) {
       setGuestWarning(true);
@@ -160,7 +161,7 @@ export default function CreateExamManual() {
           />
 
 
-          {/* כפתורים */}
+          {/* buttons */}
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
             <Button
@@ -176,7 +177,7 @@ export default function CreateExamManual() {
               איפוס
             </Button>
           </Stack>
-        {/* שגיאת אורח - עליך להתחבר}*/}
+        {/* Guest warning */}
           {guestWarning && (
             <Box sx={{
               mt: 2, p: 1.5, bgcolor: "#fff3e0", borderRadius: 2,

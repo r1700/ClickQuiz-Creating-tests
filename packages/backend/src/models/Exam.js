@@ -2,23 +2,23 @@
 import mongoose from "mongoose";
 
 const questionSchema = new mongoose.Schema({
-    type: { type: String, enum: ["mcq", "open"], required: true }, // סוג השאלה: בחירה מרובה או פתוחה
+    type: { type: String, enum: ["mcq", "open"], required: true }, // type of question: multiple choice or open-ended
     text: { type: String, required: true },
-    options: [String],           // אפשרויות בחירה
-    answer: String               // התשובה הנכונה
+    options: [String],           // options for multiple choice questions
+    answer: String               // the correct answer
 });
 
 const examSchema = new mongoose.Schema({
-    title: { type: String, required: true },   // שם המבחן
-    subject: String,                            // מקצוע
-    topic: String,                              // נושא
-    level: { type: String, enum: ["easy", "medium", "hard"] }, // רמת קושי
-    classroom: String,                          // כיתה
-    questions: [questionSchema],               // מערך שאלות
+    title: { type: String, required: true },   // exam title
+    subject: String,                            // subject
+    topic: String,                              // topic
+    level: { type: String, enum: ["easy", "medium", "hard"] }, // difficulty level
+    classroom: String,                          // class
+    questions: [questionSchema],               // array of questions
     createdAt: { type: Date, default: Date.now },
     questionTypes: { type: [String], default: ["mcq", "open"] },  // mcq = multiple choice, open = שאלת כתיבה
 
-  // הוספת שדה מזהה משתמש
+  // added userId field
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

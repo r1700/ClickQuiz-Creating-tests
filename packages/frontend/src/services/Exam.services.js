@@ -3,6 +3,7 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api"; // כתובת השרת
 
+// create exam using AI
 export const createExamAIService = async (payload) => {
     try {
         const res = await axios.post(`${BASE_URL}/exams/create-ai`, payload, {
@@ -24,6 +25,7 @@ export const createExamAIService = async (payload) => {
     }
 }
 
+// create exam manually
 export const createExamManualService = async (payload) => {
     try {
         const res = await axios.post(`${BASE_URL}/exams/create`, payload, { 
@@ -36,7 +38,7 @@ export const createExamManualService = async (payload) => {
     }
 }
 
-// שליפת מבחן לפי ID
+// get exam by ID
 export const getExamService = async (id) => {
     try {
         const res = await axios.get(`${BASE_URL}/exams/get-exams/${id}`,{ 
@@ -49,14 +51,14 @@ export const getExamService = async (id) => {
     }
 }
 
-// 🆕 עדכון מבחן קיים
+// eddit existing exam
 export const updateExamService = (examId, updatedData) => {
   return axios.put(`${BASE_URL}/exams/update/${examId}`, updatedData, {
     withCredentials: true
   });
 };
 
-// שליפת כל המבחנים של המשתמש הנוכחי
+// get all exams for the logged-in user
 export const getExamsServiceByUser = async () => {
   try {
     const res = await axios.get(`${BASE_URL}/exams/get-my-exams`, {
@@ -69,7 +71,7 @@ export const getExamsServiceByUser = async () => {
   }
 };
 
-// מחיקת מבחן לפי ID
+// delete exam by ID
 export const deleteExamService = async (examId) => {
   try {
     const res = await axios.delete(`${BASE_URL}/exams/delete/${examId}`, {

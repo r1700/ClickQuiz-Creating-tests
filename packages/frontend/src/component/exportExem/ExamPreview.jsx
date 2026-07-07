@@ -24,9 +24,9 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
         </Box>
         {view === "student" && (
           <Box sx={{ textAlign: "left" }}>
-            <Typography sx={{ mb: 0.5 }}>שם התלמיד: _______________</Typography>
+            <Typography sx={{ mb: 0.5 }}>שם התלמיד: _________</Typography>
             <Typography sx={{ mb: 0.5 }}>כיתה: {exam.classroom}</Typography>
-            <Typography>ציון: _____</Typography>
+            <Typography>ציון: ____</Typography>
           </Box>
         )}
       </Box>
@@ -52,10 +52,16 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
               </ul>
             ) : (
               view === "student" ? (
-                <Typography>
-                  ____________________________________________________<br />
-                  ____________________________________________________
-                </Typography>
+                <Box sx={{ mt: 1 }}>
+                  {[1, 2].map((line) => (
+                    <Box key={line} sx={{
+                      borderBottom: "1px solid #000",
+                      width: "100%",
+                      mb: 1,
+                      height: "20px",
+                    }} />
+                  ))}
+                </Box>
               ) : (
                 <Typography sx={{ color: "green" }}>תשובה: {q.answer || "לא הוזן"}</Typography>
               )

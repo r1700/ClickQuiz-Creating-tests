@@ -30,7 +30,7 @@ const SECONDARY_COLOR = "#14B0FF";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
 
-// אנימציות
+// Animations
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -190,7 +190,7 @@ const HomePageAnimatedStyled = () => {
                     </Box>
                 </Hero>
 
-                {/* פונקציות */}
+                {/* Features */}
                 <Box sx={{ mt: 6, alignItems: "center" }}>
                     {/* <Typography variant="h4" align="center" sx={{ fontWeight: 800, mb: 3 }}>פונקציות עיקריות</Typography> */}
                     <Grid container spacing={2} justifyContent="center" margin={{ xs: "0", md: "0 80px 0 80px" }}>
@@ -202,7 +202,7 @@ const HomePageAnimatedStyled = () => {
                     </Grid>
                 </Box>
 
-                {/* אודות */}
+                {/* About */}
                 <Box
                     id="about-section"
                     sx={{
@@ -256,7 +256,7 @@ const HomePageAnimatedStyled = () => {
                     </Container>
                 </Box>
 
-                {/* המלצות */}
+                {/* Testimonials */}
                 <Box id="testimonials-section" sx={{ mt: 10 }}>
                     <Typography variant="h4" align="center" gutterBottom sx={{ mb: 3 }}>מה מורות אומרות</Typography>
                     <Box sx={{ maxWidth: 500, mx: "auto", position: "relative" }}>

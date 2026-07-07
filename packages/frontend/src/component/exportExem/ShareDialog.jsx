@@ -8,23 +8,29 @@ import { uploadPdf } from "../../services/pdf.services";
 
 const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api";
 
-const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
+const ShareDialog = ({ open, onClose, exam, studentRef, teacherRef, setSnackbar }) => {
 
     const [shareLinks, setShareLinks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [emailSending, setEmailSending] = useState(false);
 
-    const generatePdfLink = async (mode) => {
-        if (!exam || !previewRef?.current) return null;
+    const generatePdfLink = async (ref, mode) => {
+        if (!exam || !ref?.current) return null;
+
+        const modeName = mode === "student" ? "שאלון" : "תשובות";
 
         const pdfBlob = await html2pdf()
-            .set({ margin: [0, 0, 0, 0], html2canvas: { scale: 2 }, jsPDF: { unit: "mm", format: "a4" } })
-            .from(previewRef.current)
+            .set({
+                margin: [0, 0, 0, 0],
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: "mm", format: "a4" }
+            })
+            .from(ref.current)
             .outputPdf("blob");
 
         const formData = new FormData();
-        formData.append("file", pdfBlob, `${exam.title}_${mode}.pdf`);
+        formData.append("file", pdfBlob, `${exam.title}_${modeName}.pdf`);
         const res = await uploadPdf(formData);
         const safeFilename = encodeURIComponent(res.id);
         return `${BASE_URL}/pdf/pdf/${safeFilename}`;
@@ -33,10 +39,13 @@ const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
     const handleGenerateLinks = async () => {
         setLoading(true);
         const links = [];
-        const student = await generatePdfLink("student");
+
+        const student = await generatePdfLink(studentRef, "student");
         if (student) links.push({ label: "שאלון", url: student });
-        const teacher = await generatePdfLink("teacher");
+
+        const teacher = await generatePdfLink(teacherRef, "teacher");
         if (teacher) links.push({ label: "תשובות", url: teacher });
+
         setShareLinks(links);
         setLoading(false);
     };
@@ -63,13 +72,16 @@ const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
             setEmail("");
         } catch (err) {
             setSnackbar({ open: true, message: "שגיאה בשליחת המייל" });
-        } finally { setEmailSending(false); }
+        } finally {
+            setEmailSending(false);
+        }
     };
 
     useEffect(() => {
-        if (open) setShareLinks([]);
-        // ריסט ללינקים בכל פתיחה
-        handleGenerateLinks();
+        if (open) {
+            setShareLinks([]);
+            handleGenerateLinks();
+        }
     }, [open]);
 
     return (
@@ -106,11 +118,17 @@ const ShareDialog = ({ open, onClose, exam, previewRef, setSnackbar }) => {
                         <QRCodeCanvas value={item.url} size={64} />
                     </Box>
                 ))}
+
                 <Divider sx={{ my: 2 }}>או</Divider>
                 <Typography >שתף למייל</Typography>
 
                 <Box sx={{ mt: 2, display: "flex", alignItems: "center", gap: 2 }}>
-                    <TextField label="מייל יעד" value={email} onChange={e => setEmail(e.target.value)} fullWidth />
+                    <TextField
+                        label="מייל יעד"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        fullWidth
+                    />
                     <IconButton color="primary" onClick={handleSendEmail} disabled={!email || emailSending}>
                         <EmailIcon />
                     </IconButton>

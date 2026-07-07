@@ -6,17 +6,16 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { sendEmail } from "../utils/sendEmail.js";
 
-// תיקון __dirname ל-ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const router = express.Router();
 
-// הגדרת תיקיית שמירה זמנית
+// Define a temporary storage folder for uploaded files
 const uploadFolder = path.join(__dirname, "../../uploads");
 if (!fs.existsSync(uploadFolder)) fs.mkdirSync(uploadFolder, { recursive: true });
 
-// הגדרת multer
+// Define multer 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadFolder);
@@ -37,7 +36,7 @@ router.post("/upload-pdf", upload.single("file"), (req, res) => {
 router.get("/pdf/:id", (req, res) => {
     const filePath = path.join(uploadFolder, req.params.id);
     if (fs.existsSync(filePath)) {
-        res.sendFile(filePath); // מציג את הקובץ בדפדפן
+        res.sendFile(filePath); // view the doc in the browser
         // res.download(filePath);
     } else {
         res.status(404).send("File not found");

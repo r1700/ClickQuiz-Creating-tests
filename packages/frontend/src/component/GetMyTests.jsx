@@ -1,4 +1,4 @@
-// ...existing code...
+// 
 import React, { useEffect, useState } from "react";
 import {
     Box,
@@ -46,7 +46,7 @@ const MyTestsList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // פילטרים
+    // Filters
     const [search, setSearch] = useState("");
     const [subject, setSubject] = useState("");
     const [classroom, setClassroom] = useState("");
@@ -96,7 +96,7 @@ const MyTestsList = () => {
         fetchExams();
     }, [user]);
 
-    // סינון
+    // filtering
     useEffect(() => {
         let filteredExams = [...exams];
         if (search) {
@@ -136,7 +136,7 @@ const MyTestsList = () => {
                     marginTop: 0,
                 }}
             >
-                {/* כותרת */}
+                {/* Title */}
                 <Paper
                     elevation={2}
                     sx={{
@@ -188,7 +188,7 @@ const MyTestsList = () => {
                     </Stack>
                 </Paper>
 
-                {/* פילטרים */}
+                {/* Filters */}
                 <Collapse in={showFilters}>
                     <Card
                         variant="outlined"
@@ -268,7 +268,7 @@ const MyTestsList = () => {
                     </Card>
                 </Collapse>
 
-                {/* רשימת מבחנים */}
+                {/* Exam List */}
                 {filtered.length === 0 ? (
                     <Box sx={{ textAlign: "center", mt: 6 }}>
                         <Typography variant="h6" sx={{ color: "text.secondary", mb: 1 }}>
@@ -295,7 +295,7 @@ const MyTestsList = () => {
                             >
                                 <CardContent sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 2 }, p: { xs: 1.5, md: 2 } }}>
 
-                                    {/* Avatar - רק בדסקטופ */}
+                                    {/* Avatar - Only on desktop */}
                                     <Avatar
                                         sx={{
                                             display: { xs: "none", md: "flex" },
@@ -309,7 +309,7 @@ const MyTestsList = () => {
                                         {String(exam.title || "מבחן").slice(6, 7).toUpperCase()}
                                     </Avatar>
 
-                                    {/* תוכן */}
+                                    {/* Content */}
                                     <Box sx={{ flex: 1, minWidth: 0 }}>
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ minWidth: 0 }}>
                                             <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -333,7 +333,7 @@ const MyTestsList = () => {
                                         </Typography>
                                     </Box>
 
-                                    {/* כפתורי פעולה */}
+                                    {/* buttons for actions */}
                                     <Stack direction="column" spacing={1}>
                                         <Tooltip title="צפה במבחן">
                                             <IconButton
@@ -366,7 +366,7 @@ const MyTestsList = () => {
                     </Stack>
                 )}
 
-                {/* כפתור צף */}
+                {/* Floating Action Button - to add a new exam */}
                 <Tooltip title="יצירת מבחן חדש" placement="left">
                     <Fab
                         color="primary"
@@ -384,7 +384,7 @@ const MyTestsList = () => {
                     </Fab>
                 </Tooltip>
 
-                {/* דיאלוג מחיקה */}
+                {/* Delete Confirmation Dialog */}
                 <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} dir="rtl">
                     <DialogTitle>אישור מחיקה</DialogTitle>
                     <DialogContent>
@@ -403,4 +403,3 @@ const MyTestsList = () => {
 };
 
 export default MyTestsList;
-// ...existing code...

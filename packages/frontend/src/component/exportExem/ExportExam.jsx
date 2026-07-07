@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Typography, ToggleButtonGroup, ToggleButton, Button, IconButton } from "@mui/material";
+import { Box, Typography, ToggleButtonGroup, ToggleButton, Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { getExamService } from "../../services/Exam.services";
 import DownloadMenu from "./DownloadMenu";
@@ -21,12 +21,19 @@ const LIGHT_BG = "#F6F9FB";
 const ExportExam = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  // ref to the main preview component (just for display)
   const previewRef = useRef();
+
+  // two hidden refs - always contain the exam / answers regardless of what is displayed on the screen
+  const studentRef = useRef();
+  const teacherRef = useRef();
 
   const [exam, setExam] = useState(null);
   const [view, setView] = useState("student");
   const [shareOpen, setShareOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const [printAnchorEl, setPrintAnchorEl] = useState(null);
 
   useEffect(() => {
     const fetchExam = async () => {
@@ -40,12 +47,21 @@ const ExportExam = () => {
     fetchExam();
   }, [id]);
 
-  const handlePrint = useReactToPrint({
-    contentRef: previewRef,
-    documentTitle: "מבחן",
-    // onAfterPrint: () => alert("ההדפסה הושלמה!"),
-
+  const handlePrintStudent = useReactToPrint({
+    contentRef: studentRef,
+    documentTitle: `${exam?.title || "מבחן"} - שאלון`,
   });
+
+  const handlePrintTeacher = useReactToPrint({
+    contentRef: teacherRef,
+    documentTitle: `${exam?.title || "מבחן"} - תשובות`,
+  });
+
+  const handlePrintOption = (option) => {
+    setPrintAnchorEl(null);
+    if (option === "student") handlePrintStudent();
+    else if (option === "teacher") handlePrintTeacher();
+  };
 
   return (
     <Box sx={{ bgcolor: LIGHT_BG }}>
@@ -63,35 +79,49 @@ const ExportExam = () => {
           </ToggleButtonGroup>
         </Box>
 
-        {/* פעולות : הורדה, שיתוף, הדפסה */}
+        {/* actions: download, share, print */}
         <Box>
-          <DownloadMenu ref={previewRef} exam={exam} />
+          <DownloadMenu studentRef={studentRef} teacherRef={teacherRef} exam={exam} />
           <Tooltip title="שתף">
             <IconButton color="primary" onClick={() => setShareOpen(true)} size="large">
               <ShareIcon />
             </IconButton>
           </Tooltip>
-          {/* הדפסה */}
 
+          {/* print */}
           <Tooltip title="הדפס ">
             <IconButton
               color="primary"
               // onClick={() => window.print()}
-              onClick={handlePrint}
+              onClick={(e) => setPrintAnchorEl(e.currentTarget)}
               size="large"
             >
               <PrintIcon fontSize="inherit" />
             </IconButton>
           </Tooltip>
+          <Menu anchorEl={printAnchorEl} open={Boolean(printAnchorEl)} onClose={() => setPrintAnchorEl(null)}>
+            <MenuItem onClick={() => handlePrintOption("student")}>הדפס שאלון</MenuItem>
+            <MenuItem onClick={() => handlePrintOption("teacher")}>הדפס תשובות</MenuItem>
+          </Menu>
         </Box>
 
+        {/* main preview component */}
         <ExamPreview ref={previewRef} exam={exam} view={view} />
+
+        {/* hidden previews - always exist in the DOM, off-screen */}
+        <Box sx={{ position: "absolute", left: "-9999px", top: 0, width: "900px" }}>
+          <ExamPreview ref={studentRef} exam={exam} view="student" />
+        </Box>
+        <Box sx={{ position: "absolute", left: "-9999px", top: 0, width: "900px" }}>
+          <ExamPreview ref={teacherRef} exam={exam} view="teacher" />
+        </Box>
 
         <ShareDialog
           open={shareOpen}
           onClose={() => setShareOpen(false)}
           exam={exam}
-          previewRef={previewRef}
+          studentRef={studentRef}
+          teacherRef={teacherRef}
           setSnackbar={setSnackbar}
         />
 

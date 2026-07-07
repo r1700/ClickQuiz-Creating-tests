@@ -16,8 +16,8 @@ export const AuthProvider = ({ children }) => {
 
   const LogOut = async () => {
     try {
-      await logout(); // שולח בקשה לשרת למחיקת ה-cookie
-      setUser(null);     // מאפס את המשתמש
+      await logout(); // send request to server to delete Cookie
+      setUser(null);     // clear user state
       // isLoggedIn = false;
     } catch (err) {
       console.error("LogOut failed:", err);

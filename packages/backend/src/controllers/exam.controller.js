@@ -6,7 +6,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
 dotenv.config();
 
-// ✅ יצירת מבחן חדש
+//  create new exam 
 export const createExam = async (req, res) => {
     try {
 
@@ -17,7 +17,7 @@ export const createExam = async (req, res) => {
             classroom,
             level,
             topic,
-            questions: questions || [], // אם רוצים, אפשר לשלוח שאלות כבר ביצירה
+            questions: questions || [], // if no questions provided, default to empty array
             userId: req.user.id
         });
         const savedExam = await exam.save();
@@ -29,7 +29,7 @@ export const createExam = async (req, res) => {
     }
 };
 
-// יצירת מבחן חדש עם שאלות שנוצרו על ידי AI
+//  create a new AI-generated exam
 
 // ---OPEN_AI
 //  const openai = new OpenAI({
@@ -45,7 +45,7 @@ export const createExamAI = async (req, res) => {
 
         const { title, subject, topic, classroom, level, numQuestions, questionTypes } = req.body;
 
-        // prompt ל‑AI בהתאם לכיתה ורמת קושי
+        // prompt to AI using the provided parameters: subject, classroom, level, topic, numQuestions, questionTypes
         const prompt = `
                 Create ${numQuestions} questions for ${subject}.
                 Classroom: ${classroom}, Level: ${level}.
@@ -72,7 +72,7 @@ export const createExamAI = async (req, res) => {
         const result = await model.generateContent(prompt);
         let aiText = result.response.text();
         
-        // הסרה של ```json ... ``` אם קיים
+        // Remove ```json ... ``` if present
         aiText = aiText.replace(/```json|```/g, "").trim();
         let questions = [];
 
@@ -92,7 +92,7 @@ export const createExamAI = async (req, res) => {
             return res.status(500).json({ error: "AI did not return valid JSON." });
         }
 
-        // יצירת המבחן ושמירה במסד
+        // create the exam and save in the DB
         const exam = new Exam({ title, subject, topic, level, classroom, questions, questionTypes, userId: req.user.id });
         const savedExam = await exam.save();
 
@@ -106,7 +106,7 @@ export const createExamAI = async (req, res) => {
     }
 };
 
-// ✅ שליפת כל המבחנים של משתמש
+//  get all exams for a user
 export const getExamsForUser = async (req, res) => {
     try {
         if (!req.user?.id) return res.status(401).json({ message: "Unauthorized" });
@@ -118,10 +118,10 @@ export const getExamsForUser = async (req, res) => {
 };
 
 
-// ✅ שליפת מבחן לפי ID
+//  get exam by ID
 export const getExamById = async (req, res) => {
     try {
-        // const { view } = req.query; // view יכול להיות "teacher" או "student"
+        // const { view } = req.query; // view : "teacher" or "student"
         const exam = await Exam.findById(req.params.id).lean();
         if (!exam) return res.status(404).json({ error: "Exam not found" });
 
@@ -144,15 +144,15 @@ export const getExamById = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 }
-// ✅ עדכון מבחן קיים
+//  update existing exam
 export const updateExam = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
 
         const updatedExam = await Exam.findByIdAndUpdate(id, updateData, {
-            new: true, // מחזיר את המסמך המעודכן
-            runValidators: true, // שומר על ולידציות
+            new: true, // return the updated document
+            runValidators: true, // run validation checks
         });
 
         if (!updatedExam) {

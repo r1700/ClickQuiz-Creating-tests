@@ -15,7 +15,7 @@ const SECONDARY_COLOR = "#14B0FF";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
 
-// --- רכיב עזר לשדה טקסט עם תווית מעל ---
+// --- Text field helper with label above---
 const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
   <Box sx={{ mb: 2 }}>
     <Typography sx={{ mb: 0.5, fontWeight: 400, color: PRIMARY_COLOR }}>{label}</Typography>
@@ -39,6 +39,7 @@ const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
 );
 
 // --- רכיב תיבת מידע במבחן שנוצר ---
+//--- Exam info box component for the created exam
 const ExamInfoBox = ({ label, value, color, bg }) => (
   <Box sx={{ flex: "1 1 45%", p: 1, bgcolor: bg, borderRadius: 2 }}>
     <Typography variant="body2" sx={{ color, fontWeight: 500 }}>
@@ -112,8 +113,7 @@ export default function CreateExamAI() {
     setLoading(true);
     try {
       const selectedTypes = Object.keys(form.questionTypes).filter((k) => form.questionTypes[k]);
-      const levelEnglish =
-        form.level === "קל" ? "easy" : form.level === "בינוני" ? "medium" : "hard";
+      const levelEnglish = GetLevelEnglish(form.level);     
 
       const payload = {
         ...form,
@@ -157,6 +157,9 @@ export default function CreateExamAI() {
   
   const GetLevelHebrow = (level) =>
      level === "easy" ? "קל" : level === "medium" ? "בינוני" : "קשה";
+
+  const GetLevelEnglish = (level) =>
+     level === "קל" ? "easy" : level === "בינוני" ? "medium" : "hard";
 
   return (
     <Box
@@ -259,7 +262,7 @@ export default function CreateExamAI() {
             </Stack>
           </Box>
 
-          {/* הודעת אורח */}
+          {/* Guest warning */}
           {guestWarning && (
             <Box sx={{
               mt: 2,
@@ -278,7 +281,7 @@ export default function CreateExamAI() {
             </Box>
           )}
 
-          {/* הודעות כלליות */}
+          {/* Message */}
           {message && (
             <Alert severity={message.type} sx={{ mt: 2, fontSize: "1.05rem" }}>
               {message.text}

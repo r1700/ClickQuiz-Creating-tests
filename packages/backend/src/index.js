@@ -21,7 +21,7 @@ app.use(cookieParser());
 
 
 
-// חיבור ל‑MongoDB
+// connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected!✅"))
   .catch(err => console.error("Error connecting to MongoDB:", err));
@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGO_URI)
   res.json({ message: "Cookies cleared" });
 });
 
-// שימוש ב‑routes
+// use routes
 app.use("/api/exams", examRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/pdf", pdfRoutes);

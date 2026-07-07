@@ -58,7 +58,7 @@ const NavBar = () => {
         { label: "המלצות", action: () => scrollToElement("testimonials-section") },
     ];
 
-    // תפריט מובייל
+    //  Mobile Menu Drawer
     const drawer = (
         <Box sx={{ direction: "rtl", width: 250 }} role="presentation">
             <Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
@@ -106,7 +106,7 @@ const NavBar = () => {
                 <Container>
                     <Toolbar disableGutters sx={{ justifyContent: "space-between", alignItems: "center" }}>
 
-                        {/* לוגו */}
+                        {/* Logo */}
                         <img
                             src={Logo}
                             alt="ClickQuiz logo"
@@ -114,7 +114,7 @@ const NavBar = () => {
                             onClick={() => navigate("/")}
                         />
 
-                        {/* ניווט - דסקטופ בלבד */}
+                        {/* Navigation Items - Desktop Only */}
                         <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
                             {navItems.map((item) => (
                                 <Button key={item.label} sx={{ color: PRIMARY_COLOR }} onClick={item.action}>
@@ -123,7 +123,7 @@ const NavBar = () => {
                             ))}
                         </Box>
 
-                        {/* משתמש - דסקטופ בלבד */}
+                        {/* User Menu - Desktop Only */}
                         <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
                             {!isLoggedIn ? (
                                 <Button
@@ -161,7 +161,7 @@ const NavBar = () => {
                             )}
                         </Box>
 
-                        {/* המבורגר - מובייל בלבד */}
+                        {/* Mobile Menu Button */}
                         <IconButton
                             sx={{ display: { xs: "flex", md: "none" }, color: PRIMARY_COLOR }}
                             onClick={handleDrawerToggle}
@@ -173,7 +173,7 @@ const NavBar = () => {
                 </Container>
             </AppBar>
 
-            {/* Drawer מובייל */}
+            {/* Mobile Menu Drawer */}
             <Drawer
                 anchor="right"
                 open={mobileOpen}

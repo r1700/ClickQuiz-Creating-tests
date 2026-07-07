@@ -22,47 +22,47 @@ import { addQuestionService, deleteQuestionService, updateQuestionService } from
 export default function QuestionsList({ exam }) {
   const navigate = useNavigate();
 
-  // מערך השאלות שניתן לעריכה
+  // the array of questions that can be edited
   const [questions, setQuestions] = useState(exam.questions || []);
 
-  // מצב עריכה לכל שאלה - key: index, value: true/false
+  // State to track which question is in edit mode. Key: index, Value: true/false
   const [isEditing, setIsEditing] = useState({});
 
-  // שינוי טקסט או תשובה של שאלה
+  // change question text or answer
   const handleChange = (idx, field, value) => {
     const updated = [...questions];
     updated[idx][field] = value;
     setQuestions(updated);
   };
 
-  // שינוי אופציה של שאלה אמריקאית (MCQ)
+  // change option text for MCQ question
   const handleOptionChange = (qIdx, optIdx, value) => {
     const updated = [...questions];
     updated[qIdx].options[optIdx] = value;
     setQuestions(updated);
   };
 
-  // שינוי מצב עריכה של שאלה
+  // Toggle edit mode for a question
   const toggleEdit = (idx) => {
     setIsEditing((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  // שמירת שינויים של שאלה בשרת
+  // Save changes of a question to the server
   const saveQuestion = async (idx) => {
     try {
       const q = questions[idx];
       const examId = exam._id;
-      // קריאת PUT לשרת לשמירת השינויים
+      //Calling PUT to the server to save the changes
       await updateQuestionService(examId, q);
-      // לאחר שמירה - יוצא ממצב עריכה
+      // After saving - exit edit mode
       toggleEdit(idx);
     } catch (err) {
       console.error("Error saving question", err);
     }
   };
 
-  // הוספה של שאלה חדשה ושמירה בשרת
-  // הוספת שאלה חדשה לשרת ול־state
+  //Add a new question and save it to the server
+  //add a new question to the server and update the state
   const addQuestion = async (type) => {
     try {
       const newQuestion = {
@@ -72,28 +72,27 @@ export default function QuestionsList({ exam }) {
         options: type === "mcq" ? ["אופציה 1", "אופציה 2"] : [],
       };
 
-      // קריאה לשרת ליצירת השאלה במסד הנתונים
       const examId = exam._id;
       const res = await addQuestionService(examId, newQuestion);
 
-      // הוספה של השאלה החדשה ל-state עם הנתונים מהשרת (כולל _id)
+      // Update the local state with the new question returned from the server
       setQuestions(prevQuestions => [...prevQuestions, res.data]);
     } catch (err) {
       console.error("Error adding question", err);
     }
   };
 
-  // מחיקת שאלה מהמערך ומהשרת
+  // Delete a question from the array and from the server
   const deleteQuestion = async (idx) => {
     try {
       const q = questions[idx];
       if (q._id) {
-        // קריאה לשרת למחיקת השאלה
+        //Calling DELETE to the server to remove the question
         await deleteQuestionService(exam._id, q._id);
-      
+
       }
 
-      // הסרה מ־state המקומי
+      // Remove from local state
       const updated = [...questions];
       updated.splice(idx, 1);
       setQuestions(updated);
@@ -102,7 +101,7 @@ export default function QuestionsList({ exam }) {
     }
   };
 
-  // שמירה של תשובה חדשה (מקומית בלבד)
+  //save of a new answer (local only)
   // const saveAnswer = (idx) => {
   //   setIsEditing((prev) => ({ ...prev, [idx]: false }));
   // };
@@ -111,18 +110,17 @@ export default function QuestionsList({ exam }) {
 
   return (
     <div>
-      {/* כותרת כללית */}
+      {/* General title*/}
       <Typography variant="h5" fontWeight="bold" gutterBottom>
         שאלות המבחן
       </Typography>
 
-     
-      {/* מעבר על כל השאלות */}
+
+      {/*map of all the questions  */}
       {questions.map((q, idx) => (
         <Accordion key={q._id || idx} sx={{ mb: 1 }}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            {/* אם במצב עריכה מציג TextField, אחרת Typography */}
-            {isEditing[idx] ? (
+            {/* If in edit mode displays TextField, otherwise Typography */}            {isEditing[idx] ? (
               <TextField
                 fullWidth
                 value={q.text}
@@ -137,7 +135,7 @@ export default function QuestionsList({ exam }) {
           </AccordionSummary>
 
           <AccordionDetails>
-            {/* אם סוג השאלה הוא MCQ */}
+            {/* if type is MCQ */}
             {q.type === "mcq" ? (
               <Box>
                 {q.options?.map((opt, i) =>
@@ -160,7 +158,7 @@ export default function QuestionsList({ exam }) {
                     />
                   )
                 )}
-                {/* תשובה נכונה */}
+                {/* Correct Answer */}
                 {isEditing[idx] && (
                   <TextField
                     fullWidth
@@ -178,7 +176,7 @@ export default function QuestionsList({ exam }) {
                 )}
               </Box>
             ) : (
-              // סוג פתוח
+              // type is open question
               isEditing[idx] ? (
                 <TextField
                   fullWidth
@@ -194,7 +192,7 @@ export default function QuestionsList({ exam }) {
               )
             )}
 
-            {/* כפתורים לכל שאלה */}
+            {/* buttons for each question */}
             <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
               <IconButton
                 onClick={() =>
@@ -212,7 +210,7 @@ export default function QuestionsList({ exam }) {
         </Accordion>
 
       ))}
-       {/* כפתורים להוספת שאלות */}
+      {/* buttons for adding questions */}
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
         <Button
           variant="outlined"
@@ -238,12 +236,12 @@ export default function QuestionsList({ exam }) {
         type="submit"
         fullWidth
         sx={{ py: 1.5 }}
-        onClick={() => {          
+        onClick={() => {
           navigate(`/export-exam/${exam._id}`, { state: { exam: exam } });
         }}
       >אישור</Button>
 
-      {/* קומפוננטת ייצוא המבחן ל־PDF */}
+      {/* Component Export exam to PDF */}
       {/* <ExportExam exam={exam} /> */}
 
 

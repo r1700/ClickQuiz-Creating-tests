@@ -1,15 +1,15 @@
 import Exam from "../models/Exam.js";
 
 
-// ✅ עדכון מבחן קיים
+//  update existing exam
 export const updateExam = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
 
     const updatedExam = await Exam.findByIdAndUpdate(id, updateData, {
-      new: true, // מחזיר את המסמך המעודכן
-      runValidators: true, // שומר על ולידציות
+      new: true, // return the updated document
+      runValidators: true, // run validation checks
     });
 
     if (!updatedExam) {
@@ -26,7 +26,7 @@ export const updateExam = async (req, res) => {
   }
 };
 
-// עדכון שאלה קיימת
+// update existing question
 export const updateQuestion = async (req, res) => {
     try {
         const { examId, questionId } = req.params;
@@ -50,7 +50,7 @@ export const updateQuestion = async (req, res) => {
     }
 }
 
-// הוספת שאלה חדשה
+//  add new question
 export const addQuestion = async (req, res) => {
     try {
         const { examId } = req.params;
@@ -69,7 +69,7 @@ export const addQuestion = async (req, res) => {
     }
 }
 
-// מחיקת שאלה
+//  delete question
 export const deleteQuestion =async (req, res) => {
     try {
         const { examId, questionId } = req.params;

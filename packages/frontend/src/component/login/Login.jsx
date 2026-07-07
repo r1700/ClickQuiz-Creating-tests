@@ -16,7 +16,8 @@ const PRIMARY_COLOR = "#002275";
 const SECONDARY_COLOR = "#3B6B7F";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
-// --- רכיב עזר לשדה טקסט עם תווית מעל והודעת שגיאה ---
+
+// --- Text field helper with label above---
 const LabeledField = ({
     label,
     type = "text",
@@ -55,7 +56,7 @@ export default function Login() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    // אימות טופס – החזרת אובייקט שגיאות לפי שדה
+    // Form validation
     const validateForm = () => {
         const errs = {};
         if (!form.email) errs.email = "נא להזין אימייל";
@@ -163,7 +164,7 @@ export default function Login() {
                             }}
                         />
 
-                        {/* 🔹 כפתור שכחת סיסמה */}
+                        {/* Forgot Password Link */}
                         <Link
                             underline="hover"
                             sx={{
@@ -200,7 +201,7 @@ export default function Login() {
                             </Link>
                         </Typography>
 
-                        {/* 🔹 Divider “או” */}
+                        {/* Divider “או” */}
                         <Divider
                             sx={{
                                 my: 3,
@@ -210,7 +211,7 @@ export default function Login() {
                             <Typography sx={{ color: "#666", fontWeight: 500 }}>או</Typography>
                         </Divider>
 
-                        {/* 🔹 Google Login */}
+                        {/* Google Login */}
                         <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
                             <GoogleLogin
                                 onSuccess={async (credentialResponse) => {

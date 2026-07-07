@@ -9,7 +9,7 @@ const api = axios.create({
 export const login = async (data) => {
     try {
         const res = await axios.post(`${API_URL}/auth/login`, data, {
-            withCredentials: true, // חשוב לשלוח cookies לשרת
+            withCredentials: true,
         });
         return res.data;
     } catch (error) {
@@ -43,7 +43,7 @@ export const logout = async () => {
 export const me = async () => {
     try {
         const res = await axios.get(`${API_URL}/auth/me`, {
-            withCredentials: true, // חשוב לשלוח cookies לשרת
+            withCredentials: true, 
         });
         return res.data;
     } catch (error) {

@@ -25,7 +25,8 @@ const PRIMARY_COLOR = "#002275";
 const SECONDARY_COLOR = "#3B6B7F";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
-// --- רכיב עזר לשדה טקסט עם תווית מעל והודעת שגיאה ---
+
+// --- Text field helper with label above ---
 const LabeledField = ({
   label,
   type = "text",
@@ -72,7 +73,7 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // אימות טופס
+  // validate form fields
   const validateForm = () => {
     const errs = {};
     if (!form.name.trim()) errs.name = "נא להזין שם מלא";
@@ -245,7 +246,7 @@ export default function Register() {
                   const decoded = jwtDecode(credentialResponse.credential);
                   const idToken = credentialResponse.credential;
                   try {
-                    // שלח את ה־idToken לשרת
+                    //the server will verify the token and return user info
                     const res = await loginWithGoogle({ idToken });
                     setUser(res.user);
                     // Cookies.set("token", res.user.token, { expires: 7, path: "/" }); // נשמר לשבוע שלם

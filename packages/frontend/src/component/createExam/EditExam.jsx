@@ -22,7 +22,7 @@ const SECONDARY_COLOR = "#14B0FF";
 const ACCENT_COLOR = "#FFB300";
 const LIGHT_BG = "#F6F9FB";
 
-// --- רכיב עזר לשדה טקסט עם תווית ---
+// --- Text field helper with label above---
 const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
   <Box sx={{ mb: 2 }}>
     <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>{label}</Typography>
@@ -59,10 +59,10 @@ export default function EditExam() {
   const [exam, setExam] = useState(null);
   const { examId } = useParams();  
 
-  // שינוי ערכים
+  // change field value
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  // צבע לפי רמת קושי
+  // get level color for select
   const getLevelColor = () =>
     form.level === "קל"
       ? "#388e3c"
@@ -70,7 +70,7 @@ export default function EditExam() {
       ? "#f57c00"
       : "#d32f2f";
 
-  // שליפה ראשונית של מבחן קיים
+  // fetch exam data on mount
   useEffect(() => {
     const fetchExam = async () => {
       try {
@@ -103,7 +103,7 @@ export default function EditExam() {
     if (examId) fetchExam();
   }, [examId]);
 
-  // שמירת שינויים
+  // save changes to exam
   const handleSaveChanges = async () => {
     setMessage(null);
     setSaving(true);

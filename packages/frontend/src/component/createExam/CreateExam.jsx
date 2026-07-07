@@ -21,7 +21,7 @@ export default function CreateExamMain() {
                     יצירת מבחן
                 </Typography>
 
-                {/* כפתורי בחירה בין AI לידני */}
+                {/* Button group for selecting AI or manual exam creation */}
                 <Box sx={{ display: "flex", gap: 2, mb: 3, flexDirection: "row-reverse"}}>
                     <Button
                        
@@ -41,7 +41,7 @@ export default function CreateExamMain() {
                     </Button>
                 </Box>
 
-                {/* הצגת קומפוננטת יצירה לפי מצב */}
+                {/*Displaying a creation component by status  */}
                 {mode === "ai" ? <CreateExamAI /> : <CreateExamManual />}
             </Box>
 

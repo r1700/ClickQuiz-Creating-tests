@@ -59,9 +59,6 @@ export const login = async (req, res) => {
     }
 }
 // logout
-// export const logout = (req, res) => {
-//     res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production" }).json({ ok: true });
-// };
 export const logout = (req, res) => {
     try {
         // מוחקים את כל הקוקיז הרלוונטיים
@@ -83,7 +80,7 @@ export const logout = (req, res) => {
 };
 
 
-// --- forgotPassword ---
+//  forgotPassword 
 export const forgotPassword = async (req, res) => {
     try {
         const { email } = req.body;
@@ -92,7 +89,7 @@ export const forgotPassword = async (req, res) => {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: "משתמשת לא נמצאה" });
 
-        // יצירת טוקן
+        //  Create token
         const token = crypto.randomBytes(32).toString("hex");
         user.resetToken = token;
         user.resetTokenExpire = Date.now() + 1000 * 60 * 60; // 1 שעה (לפי רצונך)
@@ -121,7 +118,7 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// --- resetPassword ---
+//  resetPassword 
 export const resetPassword = async (req, res) => {
     try {
         const { token } = req.params;
@@ -135,7 +132,7 @@ export const resetPassword = async (req, res) => {
 
         if (!user) return res.status(400).json({ message: "קישור לא תקף או שפג תוקפו" });
 
-        // עדכון סיסמה
+        //  update password
         const salt = await bcrypt.genSalt(10);
         user.passwordHash = await bcrypt.hash(password, salt);
 
@@ -144,7 +141,7 @@ export const resetPassword = async (req, res) => {
 
         await user.save();
 
-        // אחרי איפוס — ניצור טוקן ונשלח cookie (אם תרצה)
+        // after reset — create token and send cookie
         const jwtToken = jwt.sign({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "7d" });
         res.cookie("token", jwtToken, COOKIE_OPTIONS).json({ message: "הסיסמה אופסה בהצלחה", user: { id: user._id, name: user.name, email: user.email, role: user.role } });
     } catch (err) {
@@ -154,9 +151,7 @@ export const resetPassword = async (req, res) => {
 };
 
 
-// --- googleLogin ---
-
-
+//  googleLogin 
 
 
 export const googleLogin = async (req, res) => {
@@ -164,10 +159,10 @@ export const googleLogin = async (req, res) => {
         const { idToken } = req.body;
         if (!idToken) return res.status(400).json({ message: "Missing Google idToken" });
 
-        // יצירת לקוח Google
+        //  create Google client
         const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-        // אימות הטוקן
+        //  verify token
         const ticket = await client.verifyIdToken({
             idToken,
             audience: process.env.GOOGLE_CLIENT_ID,
@@ -179,11 +174,11 @@ export const googleLogin = async (req, res) => {
         const { email, name, sub } = payload;
         if (!email) return res.status(400).json({ message: "Missing email in token" });
 
-        // בדיקה אם המשתמש קיים
+        //  check if user exists
         let user = await User.findOne({ email });
 
         if (!user) {
-            // משתמש חדש מגוגל
+            //  new user from Google
             user = new User({
                 name: name || "משתמש חדש",
                 email,
@@ -193,14 +188,14 @@ export const googleLogin = async (req, res) => {
             await user.save();
         }
 
-        // צור JWT רגיל למערכת שלך
+        //  create regular JWT for your system
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: "7d" }
         );
 
-        // שמור cookie ושלח ללקוח
+        // send token in cookie and user info in response
         res
             .cookie("token", token, COOKIE_OPTIONS)
             .json({ user: { id: user._id, name: user.name, email: user.email, role: user.role }, token });

@@ -13,28 +13,30 @@ const router = express.Router();
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
-// POST /exams/create - ליצור מבחן חדש
+// POST /exams/create - to create a new exam
 router.post("/create", auth, createExam);
 
-// POST /create-ai - ליצור מבחן עם שאלות מ‑AI לפי כיתה ורמה
+// POST /create-ai - to create a new AI-generated exam
 router.post("/create-ai", auth, createExamAI);
 
 router.get("/get-my-exams", auth, getExamsForUser);
 
 // GET /exams/:id?view=teacher|student
 router.get("/get-exams/:id",getExamById );
-// עדכון פרטי מבחן (ללא שאלות)
-router.put("/update/:id", updateExam);       // ← כאן עדכון
-// מחיקת מבחן
+
+// update exam details (without questions)
+router.put("/update/:id", updateExam);  
+
+// delete exam
 router.delete("/delete/:id", deleteExam);      
 
-// עדכון שאלה קיימת
+// update existing question
 router.put("/:examId/questions/:questionId",updateQuestion );
 
-// הוספת שאלה חדשה
+// add new question
 router.post("/:examId/questions", addQuestion);
 
-// מחיקת שאלה
+// delete question
 router.delete("/:examId/questions/:questionId",deleteQuestion );
 
 
