@@ -10,13 +10,11 @@ import { log } from "console";
 
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    //   secure: process.env.NODE_ENV === "production", // true in prod with HTTPS
-    secure: false,
-    // secure: process.env.NODE_ENV === "production" ? true : false, // או אפילו true גם ב-dev אם את עובדת על https
-    sameSite: "lax",
-    // sameSite: process.env.NODE_ENV === "production" ? "None" : "None", // חשוב: None ב-localhost
-    // sameSite: "None" , // חשוב: None ב-localhost
-    path: "/",           // חשוב להחלפה נכונה
+    secure: process.env.NODE_ENV === "production", // true in prod with HTTPS
+    sameSite: process.env.NODE_ENV === "production" ?  "none" : "lax",
+    // sameSite: "lax",
+    // sameSite: "None" , 
+    path: "/",           
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
 };
 
@@ -71,7 +69,7 @@ export const logout = (req, res) => {
         cookiesToClear.forEach(name => {
             res.clearCookie(name, {
                 httpOnly: true,          // במיוחד ל-token
-                sameSite: "lax",        // או "lax" לפי הצורך שלך
+                sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",       
                 secure: process.env.NODE_ENV === "production",
                 path: "/",               // חשוב למחוק ב-path הנכון
             });
