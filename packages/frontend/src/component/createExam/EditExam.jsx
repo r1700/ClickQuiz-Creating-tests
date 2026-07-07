@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Typography,
-  TextField,
   Button,
   Select,
   MenuItem,
@@ -15,60 +14,32 @@ import {
 import QuestionsList from "./QuestionsList";
 import {updateExamService, getExamService } from "../../services/Exam.services";
 import { useParams } from "react-router-dom";
-
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
-
-// --- Text field helper with label above---
-const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
-  <Box sx={{ mb: 2 }}>
-    <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>{label}</Typography>
-    <TextField
-      type={type}
-      value={value}
-      onChange={onChange}
-      fullWidth
-      {...props}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          borderRadius: 2,
-          "& fieldset": { borderColor: "#d1d9ff" },
-          "&:hover fieldset": { borderColor: "#9fa8da" },
-          "&.Mui-focused fieldset": { borderColor: "#3f51b5" },
-        },
-      }}
-      inputProps={{ dir: "rtl", style: { textAlign: "right" } }}
-    />
-  </Box>
-);
+import LabeledField from "../common/LabeledField";
+import { COLORS } from "../../theme/colors";
+import { useExamForm } from "../../hooks/useExamForm";
 
 export default function EditExam() {
-  const [form, setForm] = useState({
+  const initialForm = {
     title: "",
     subject: "",
     classroom: "",
     level: "קל",
     topic: "",
-  });
-  const [loading, setLoading] = useState(true);
+  };
+
+  const {
+    form,
+    setForm,
+    loading,
+    setLoading,
+    message,
+    setMessage,
+    handleChange,
+  } = useExamForm(initialForm);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState(null);
   const [exam, setExam] = useState(null);
-  const { examId } = useParams();  
+  const { examId } = useParams();
 
-  // change field value
-  const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
-
-  // get level color for select
-  const getLevelColor = () =>
-    form.level === "קל"
-      ? "#388e3c"
-      : form.level === "בינוני"
-      ? "#f57c00"
-      : "#d32f2f";
 
   // fetch exam data on mount
   useEffect(() => {
@@ -82,12 +53,7 @@ export default function EditExam() {
           title: data.title || "",
           subject: data.subject || "",
           classroom: data.classroom || "",
-          level:
-            data.level === "easy"
-              ? "קל"
-              : data.level === "medium"
-              ? "בינוני"
-              : "קשה",
+          level: getLevelHebrow(data.level) || "קל",
           topic: data.topic || "",
         });
       } catch (err) {
@@ -108,9 +74,8 @@ export default function EditExam() {
     setMessage(null);
     setSaving(true);
     try {
-      const levelEnglish =
-        form.level === "קל" ? "easy" : form.level === "בינוני" ? "medium" : "hard";
-
+      const levelEnglish = getLevelEnglish(form.level);
+  
       const updated = {
         ...exam,
         ...form,
@@ -129,6 +94,16 @@ export default function EditExam() {
       setSaving(false);
     }
   };
+  
+    const getLevelColor = () =>
+     form.level === "קל" ? COLORS.successGreen : form.level === "בינוני" ? COLORS.warningOrange : COLORS.dangerRed;
+   
+   const getLevelHebrow = (level) =>
+      level === "easy" ? "קל" : level === "medium" ? "בינוני" : "קשה";
+ 
+   const getLevelEnglish = (level) =>
+      level === "קל" ? "easy" : level === "בינוני" ? "medium" : "hard";
+ 
 
   if (loading)
     return (
@@ -144,6 +119,7 @@ export default function EditExam() {
       </Box>
     );
 
+
   return (
     <Box
       sx={{
@@ -152,7 +128,7 @@ export default function EditExam() {
         alignItems: "center",
         py: 6,
         minHeight: "100vh",
-        background: LIGHT_BG,
+        background: COLORS.lightBg,
         direction: "rtl",
       }}
     >
@@ -162,9 +138,9 @@ export default function EditExam() {
           maxWidth: 540,
           borderRadius: 5,
           p: 3,
-          backgroundColor: "#ffffffcc",
-          boxShadow: "0 8px 32px rgba(31, 38, 135, 0.12)",
-          border: "1.5px solid #e3e8ff",
+          backgroundColor: COLORS.whiteSoft,
+          boxShadow: `0 8px 32px ${COLORS.shadowBlue}`,
+          border: `1.5px solid ${COLORS.borderSoft}`,
         }}
       >
         <CardContent>
@@ -173,9 +149,9 @@ export default function EditExam() {
             align="center"
             sx={{
               mb: 3,
-              color: "#283593",
+              color: COLORS.textPrimary,
               letterSpacing: 1,
-              textShadow: "0 2px 8px #e3e8ff",
+              textShadow: `0 2px 8px ${COLORS.borderSoft}`,
             }}
           >
             עריכת מבחן קיים
@@ -206,7 +182,7 @@ export default function EditExam() {
           />
 
           <FormControl fullWidth sx={{ mb: 2 }}>
-            <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>
+            <Typography sx={{ mb: 0.5, fontWeight: 400, color: COLORS.textPrimary }}>
               רמת קושי
             </Typography>
             <Select
@@ -215,13 +191,13 @@ export default function EditExam() {
               sx={{
                 color: getLevelColor(),
                 borderRadius: 2,
-                background: "#f5f7fa",
+                background: COLORS.surfaceSoft,
                 fontWeight: 400,
               }}
             >
-              <MenuItem value="קל" sx={{ color: "#388e3c", direction: "rtl" }}>קל</MenuItem>
-              <MenuItem value="בינוני" sx={{ color: "#f57c00", direction: "rtl" }}>בינוני</MenuItem>
-              <MenuItem value="קשה" sx={{ color: "#d32f2f", direction: "rtl" }}>קשה</MenuItem>
+              <MenuItem value="קל" sx={{ color: COLORS.successGreen, direction: "rtl" }}>קל</MenuItem>
+              <MenuItem value="בינוני" sx={{ color: COLORS.warningOrange, direction: "rtl" }}>בינוני</MenuItem>
+              <MenuItem value="קשה" sx={{ color: COLORS.dangerRed, direction: "rtl" }}>קשה</MenuItem>
             </Select>
           </FormControl>
 

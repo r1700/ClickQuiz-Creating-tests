@@ -32,11 +32,12 @@ import { deleteExamService } from "../services/Exam.services";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#3B6B7F";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
+import { COLORS } from "../theme/colors";
+
+
+
+import TestsPageHeader from "./common/TestsPageHeader";
+import ExamFiltersCard from "./common/ExamFiltersCard";
 
 const MyTestsList = () => {
     const { user } = useContext(AuthContext);
@@ -63,7 +64,7 @@ const MyTestsList = () => {
     const confirmDelete = async () => {
         try {
             const res = await deleteExamService(selectedExamId);
-            if (res.status === 200) {
+            if (!res.isError && res.status === 200) {
                 setExams((prev) => prev.filter((e) => e._id !== selectedExamId));
                 setFiltered((prev) => prev.filter((e) => e._id !== selectedExamId));
             } else {
@@ -85,8 +86,12 @@ const MyTestsList = () => {
         const fetchExams = async () => {
             try {
                 const res = await getExamsServiceByUser();
-                setExams(res.data);
-                setFiltered(res.data);
+                if (!res.isError) {
+                    setExams(res.data || []);
+                    setFiltered(res.data || []);
+                } else {
+                    setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
+                }
             } catch (err) {
                 setError("שגיאה בטעינת המבחנים. נסי שוב מאוחר יותר.");
             } finally {
@@ -124,7 +129,7 @@ const MyTestsList = () => {
     if (error) return <Alert severity="error">{error}</Alert>;
 
     return (
-        <Box sx={{ bgcolor: LIGHT_BG }}>
+        <Box sx={{ bgcolor: COLORS.lightBg }}>
             <Box
                 sx={{
                     maxWidth: 1100,
@@ -136,136 +141,25 @@ const MyTestsList = () => {
                     marginTop: 0,
                 }}
             >
-                {/* Title */}
-                <Paper
-                    elevation={2}
-                    sx={{
-                        p: 2,
-                        mb: 3,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        background: "linear-gradient(90deg,#f7fbfc,#eef7fa)",
-                        borderRadius: "12px",
-                    }}
-                >
-                    <Stack direction="row" spacing={2} alignItems="center">
-                        <Box>
-                            <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                                המבחנים שלי
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary" sx={{ display: { xs: "none", md: "block" } }}>
-                                ניהול, עריכה ושיתוף של מבחנים שנוצרו על ידיך
-                            </Typography>
-                        </Box>
-                    </Stack>
+                <TestsPageHeader
+                    title="המבחנים שלי "
+                    subtitle="ניהול, עריכה ושיתוף של מבחנים שנוצרו על ידיך"
+                    onCreateExam={() => navigate("/create-exam")}
+                    onToggleFilters={() => setShowFilters((prev) => !prev)}
+                />
 
-                    <Stack direction="row" spacing={1} alignItems="center">
-                        <Tooltip title="יצירת מבחן חדש">
-                            <Button
-                                variant="contained"
-                                onClick={() => navigate("/create-exam")}
-                                startIcon={<AddIcon />}
-                                sx={{ bgcolor: ACCENT_COLOR, minWidth: 0, px: { xs: 1, md: 2 } }}
-                            >
-                                <Box sx={{ display: { xs: "none", md: "block" } }}>
-                                    יצירת מבחן חדש
-                                </Box>
-                            </Button>
-                        </Tooltip>
-
-                        <IconButton
-                            color="primary"
-                            onClick={() => setShowFilters((prev) => !prev)}
-                            sx={{
-                                bgcolor: "#ffffff",
-                                borderRadius: "10px",
-                                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-                            }}
-                        >
-                            <Search />
-                        </IconButton>
-                    </Stack>
-                </Paper>
-
-                {/* Filters */}
                 <Collapse in={showFilters}>
-                    <Card
-                        variant="outlined"
-                        sx={{
-                            mb: 3,
-                            p: 3,
-                            bgcolor: "#ffffff",
-                            borderRadius: "12px",
-                            boxShadow: "0 6px 18px rgba(0,0,0,0.04)",
-                        }}
-                    >
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item xs={12} md={6}>
-                                <TextField
-                                    fullWidth
-                                    placeholder="הקלידי שם מבחן, מקצוע, נושא או כיתה..."
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
-                                        direction: "rtl",
-                                    }}
-                                />
-                            </Grid>
-                            <Grid item xs={6} sm={3} md={2}>
-                                <TextField
-                                    select
-                                    value={subject}
-                                    onChange={(e) => setSubject(e.target.value)}
-                                    SelectProps={{
-                                        displayEmpty: true,
-                                        renderValue: (selected) =>
-                                            selected ? selected : <span style={{ color: "#9e9e9e" }}>מקצוע</span>,
-                                        MenuProps: { PaperProps: { sx: { direction: "rtl" } } },
-                                    }}
-                                    sx={{
-                                        width: "100%",
-                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
-                                        direction: "rtl",
-                                    }}
-                                >
-                                    <MenuItem value="">הכל</MenuItem>
-                                    {[...new Set(exams.map((e) => e.subject))].map((sub) => (
-                                        <MenuItem key={sub} value={sub}>{sub}</MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={6} sm={3} md={2}>
-                                <TextField
-                                    select
-                                    value={classroom}
-                                    onChange={(e) => setClassroom(e.target.value)}
-                                    SelectProps={{
-                                        displayEmpty: true,
-                                        renderValue: (selected) =>
-                                            selected ? selected : <span style={{ color: "#9e9e9e" }}>כיתה</span>,
-                                        MenuProps: { PaperProps: { sx: { direction: "rtl" } } },
-                                    }}
-                                    sx={{
-                                        width: "100%",
-                                        "& .MuiOutlinedInput-root": { borderRadius: "12px", height: 52 },
-                                        direction: "rtl",
-                                    }}
-                                >
-                                    <MenuItem value="">הכל</MenuItem>
-                                    {[...new Set(exams.map((e) => e.classroom))].map((cr) => (
-                                        <MenuItem key={cr} value={cr}>{cr}</MenuItem>
-                                    ))}
-                                </TextField>
-                            </Grid>
-                            <Grid item xs={12} md={2} sx={{ textAlign: "left" }}>
-                                <Button variant="outlined" onClick={() => { setSearch(""); setSubject(""); setClassroom(""); }}>
-                                    נקה
-                                </Button>
-                            </Grid>
-                        </Grid>
-                    </Card>
+                    <ExamFiltersCard
+                        search={search}
+                        subject={subject}
+                        classroom={classroom}
+                        onSearchChange={(e) => setSearch(e.target.value)}
+                        onSubjectChange={(e) => setSubject(e.target.value)}
+                        onClassroomChange={(e) => setClassroom(e.target.value)}
+                        onClearFilters={() => { setSearch(""); setSubject(""); setClassroom(""); }}
+                        subjects={[...new Set(exams.map((e) => e.subject))]}
+                        classrooms={[...new Set(exams.map((e) => e.classroom))]}
+                    />
                 </Collapse>
 
                 {/* Exam List */}
@@ -290,7 +184,7 @@ const MyTestsList = () => {
                                     borderRadius: "12px",
                                     overflow: "hidden",
                                     transition: "transform 0.14s, box-shadow 0.14s",
-                                    "&:hover": { transform: "translateY(-4px)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" },
+                                    "&:hover": { transform: "translateY(-4px)", boxShadow: `0 10px 30px ${COLORS.shadowCard}` },
                                 }}
                             >
                                 <CardContent sx={{ display: "flex", alignItems: "center", gap: { xs: 1, md: 2 }, p: { xs: 1.5, md: 2 } }}>
@@ -299,7 +193,7 @@ const MyTestsList = () => {
                                     <Avatar
                                         sx={{
                                             display: { xs: "none", md: "flex" },
-                                            bgcolor: "#4a90a4",
+                                            bgcolor: COLORS.secondaryBlue,
                                             width: 64,
                                             height: 64,
                                             fontWeight: 700,
@@ -337,7 +231,7 @@ const MyTestsList = () => {
                                     <Stack direction="column" spacing={1}>
                                         <Tooltip title="צפה במבחן">
                                             <IconButton
-                                                sx={{ color: SECONDARY_COLOR, width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                sx={{ color: COLORS.secondaryBlue, width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
                                                 onClick={() => navigate(`/export-exam/${exam._id}`)}
                                             >
                                                 <Preview sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
@@ -345,7 +239,7 @@ const MyTestsList = () => {
                                         </Tooltip>
                                         <Tooltip title="ערוך">
                                             <IconButton
-                                                sx={{ bgcolor: SECONDARY_COLOR, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                sx={{ bgcolor: COLORS.secondaryBlue, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
                                                 onClick={() => navigate(`/edit-exam/${exam._id}`)}
                                             >
                                                 <Edit sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
@@ -353,7 +247,7 @@ const MyTestsList = () => {
                                         </Tooltip>
                                         <Tooltip title="מחק">
                                             <IconButton
-                                                sx={{ bgcolor: ACCENT_COLOR, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
+                                                sx={{ bgcolor: COLORS.accent, color: "white", width: { xs: 30, md: 40 }, height: { xs: 30, md: 40 } }}
                                                 onClick={() => handleDeleteClick(exam._id)}
                                             >
                                                 <Delete sx={{ fontSize: { xs: "1rem", md: "1.5rem" } }} />
@@ -375,8 +269,8 @@ const MyTestsList = () => {
                             position: "fixed",
                             bottom: 24,
                             left: 24,
-                            backgroundColor: '#3B6B7F',
-                            ":hover": { backgroundColor: '#355a65' },
+                            backgroundColor: COLORS.secondaryBlue,
+                            ":hover": { backgroundColor: COLORS.secondaryBlueDark },
                         }}
                         onClick={() => navigate('/create-exam')}
                     >

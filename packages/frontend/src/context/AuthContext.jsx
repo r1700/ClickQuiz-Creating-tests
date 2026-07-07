@@ -11,14 +11,18 @@ export const AuthProvider = ({ children }) => {
   // const isLoggedIn = !!user;
 
   useEffect(() => {
-    me().then(u => setUser(u)).catch(() => setUser(null)).finally(() => setLoading(false));
+    me()
+      .then((res) => setUser(res.isError ? null : res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const LogOut = async () => {
     try {
-      await logout(); // send request to server to delete Cookie
-      setUser(null);     // clear user state
-      // isLoggedIn = false;
+      const res = await logout();
+      if (!res.isError) {
+        setUser(null);
+      }
     } catch (err) {
       console.error("LogOut failed:", err);
     }

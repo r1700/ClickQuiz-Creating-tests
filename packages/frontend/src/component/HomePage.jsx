@@ -27,8 +27,9 @@ import {
 import { keyframes } from "@emotion/react";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/clickquiz-logo.png";
+import { COLORS } from "../theme/colors";
 
-const ICON_STYLE = { fontSize: 22, color: "#1e88e5" };
+const ICON_STYLE = { fontSize: 22, color: COLORS.iconBlue };
 
 // animation keyframes
 const float = keyframes`
@@ -57,7 +58,7 @@ const HomePage = () => {
     }, []);
 
     return (
-        <Box sx={{ bgcolor: "#f6f8fb", minHeight: "100vh", direction: "rtl", color: "#0b1b2b" }}>
+        <Box sx={{ bgcolor: COLORS.lightBg, minHeight: "100vh", direction: "rtl", color: COLORS.textDark }}>
             {/* Top bar */}
             <AppBar position="static" elevation={0} color="transparent" sx={{ py: 1 }}>
                 <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -81,7 +82,7 @@ const HomePage = () => {
                     </Stack>
 
                     <Stack direction="row" spacing={1}>
-                        <Button variant="text" onClick={() => navigate("/get-my-exams")} sx={{ color: "#0b1b2b" }}>
+                        <Button variant="text" onClick={() => navigate("/get-my-exams")} sx={{ color: COLORS.textDark }}>
                             המבחנים שלי
                         </Button>
                         <Button
@@ -179,7 +180,7 @@ const HomePage = () => {
                                             position: "absolute",
                                             top: -16,
                                             right: 16,
-                                            bgcolor: "#1e88e5",
+                                            bgcolor: COLORS.iconBlue,
                                             color: "white",
                                             px: 2,
                                             py: 0.5,
@@ -232,7 +233,7 @@ const HomePage = () => {
                                     }}
                                 >
                                     <Stack direction="row" spacing={2} alignItems="center">
-                                        <Avatar sx={{ bgcolor: "#eaf3ff", color: "#1e88e5", animation: `${float} ${4 + (i % 3)}s ease-in-out infinite` }}>
+                                        <Avatar sx={{ bgcolor: COLORS.iconBlueSoft, color: COLORS.iconBlue, animation: `${float} ${4 + (i % 3)}s ease-in-out infinite` }}>
                                             {f.icon}
                                         </Avatar>
                                         <Box>

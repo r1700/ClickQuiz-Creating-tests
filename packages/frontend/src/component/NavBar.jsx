@@ -9,11 +9,9 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { AuthContext } from '../context/AuthContext';
 import Cookies from "js-cookie";
+import { COLORS } from '../theme/colors';
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const LIGHT_BG = "#F6F9FB";
+
 
 const NavBar = () => {
     const { user, isLoggedIn, loading, LogOut } = useContext(AuthContext);
@@ -80,14 +78,14 @@ const NavBar = () => {
                     <Button
                         fullWidth
                         variant="contained"
-                        sx={{ backgroundColor: SECONDARY_COLOR }}
+                        sx={{ backgroundColor: COLORS.secondary }}
                         onClick={() => { setMobileOpen(false); navigate('/login'); }}
                     >
                         הרשמה / התחברות
                     </Button>
                 ) : (
                     <Box>
-                        <Typography sx={{ mb: 1, color: SECONDARY_COLOR, fontWeight: 600 }}>
+                        <Typography sx={{ mb: 1, color: COLORS.secondary, fontWeight: 600 }}>
                             שלום {user.name}
                         </Typography>
                         <Button fullWidth onClick={() => { setMobileOpen(false); handleLogout(); }}>
@@ -100,9 +98,9 @@ const NavBar = () => {
     );
 
     return (
-        <Box sx={{ direction: "rtl", background: LIGHT_BG }}>
+        <Box sx={{ direction: "rtl", background: COLORS.lightBg }}>
             {loading && <div>טוען...</div>}
-            <AppBar position="fixed" sx={{ background: LIGHT_BG, boxShadow: "0 1px 4px rgba(0,0,0,0.08)", pt: 0.5, direction: "rtl", zIndex: 1200 }}>
+            <AppBar position="fixed" sx={{ background: COLORS.lightBg, boxShadow: `0 1px 4px ${COLORS.shadowSoft}`, pt: 0.5, direction: "rtl", zIndex: 1200 }}>
                 <Container>
                     <Toolbar disableGutters sx={{ justifyContent: "space-between", alignItems: "center" }}>
 
@@ -117,7 +115,7 @@ const NavBar = () => {
                         {/* Navigation Items - Desktop Only */}
                         <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center", gap: 1 }}>
                             {navItems.map((item) => (
-                                <Button key={item.label} sx={{ color: PRIMARY_COLOR }} onClick={item.action}>
+                                <Button key={item.label} sx={{ color: COLORS.primary }} onClick={item.action}>
                                     {item.label}
                                 </Button>
                             ))}
@@ -128,7 +126,7 @@ const NavBar = () => {
                             {!isLoggedIn ? (
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: SECONDARY_COLOR, color: "white", borderRadius: 2 }}
+                                    sx={{ backgroundColor: COLORS.secondary, color: COLORS.white, borderRadius: 2 }}
                                     onClick={() => navigate('/login')}
                                 >
                                     הרשמה
@@ -136,10 +134,10 @@ const NavBar = () => {
                             ) : (
                                 <>
                                     <Button
-                                        sx={{ color: SECONDARY_COLOR, gap: 1 }}
+                                        sx={{ color: COLORS.secondary, gap: 1 }}
                                         onClick={handleMenuOpen}
                                         endIcon={
-                                            <Avatar sx={{ bgcolor: SECONDARY_COLOR, color: "white", width: 32, height: 32, fontSize: "0.9rem" }}>
+                                            <Avatar sx={{ bgcolor: COLORS.secondary, color: COLORS.white, width: 32, height: 32, fontSize: "0.9rem" }}>
                                                 {user.name[0]}
                                             </Avatar>
                                         }
@@ -163,7 +161,7 @@ const NavBar = () => {
 
                         {/* Mobile Menu Button */}
                         <IconButton
-                            sx={{ display: { xs: "flex", md: "none" }, color: PRIMARY_COLOR }}
+                            sx={{ display: { xs: "flex", md: "none" }, color: COLORS.primary }}
                             onClick={handleDrawerToggle}
                         >
                             <MenuIcon />

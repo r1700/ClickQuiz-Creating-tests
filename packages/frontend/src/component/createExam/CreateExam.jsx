@@ -4,18 +4,16 @@ import CreateExamAI from "./CreateExamAI.jsx";
 import CreateExamManual from "./CreateExamManual.jsx";
 
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
+import { COLORS } from "../../theme/colors";
+
+
 
 export default function CreateExamMain() {
     const [mode, setMode] = useState("ai"); // "ai" או "manual"
 
     return (
 
-        <Box sx={{ display: "flex", justifyContent: "center", background: LIGHT_BG }}>
+        <Box sx={{ display: "flex", justifyContent: "center", background: COLORS.lightBg }}>
             <Box sx={{ maxWidth: 700, width: "100%", p: 3, mt: { xs: 1, md: 5 } }}>
                 <Typography variant="h4" align="center" gutterBottom>
                     יצירת מבחן

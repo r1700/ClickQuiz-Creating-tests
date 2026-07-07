@@ -2,6 +2,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import Logo from "../assets/ql.png";
+import { COLORS } from '../theme/colors';
 
 const Sidebar = () => {
     const sidebarStyle = {
@@ -11,8 +12,8 @@ const Sidebar = () => {
 
 
         width: '220px',
-        backgroundColor: '#001139',
-        color: 'white',
+        backgroundColor: COLORS.sidebarDark,
+        color: COLORS.white,
         // height: '100vh',
         padding: '20px',
         boxSizing: 'border-box',
@@ -28,7 +29,7 @@ const Sidebar = () => {
 
     const activeLinkStyle = {
         fontWeight: 'bold',
-        color: '#3498db',
+        color: COLORS.sidebarActive,
     };
      const logoStyle = {
     width: '100%',

@@ -1,67 +1,44 @@
 import React, { useState, useContext } from "react";
 import {
-  Box, Card, CardContent, Typography, TextField, Button, Alert, CircularProgress, Stack,
+  Box, Card, CardContent, Typography, Button, Alert, CircularProgress, Stack,
 } from "@mui/material";
 import QuestionsList from "./QuestionsList";
 import { createExamManualService } from "../../services/Exam.services";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
-
-// --- Text field helper with label above---
-const LabeledField = ({ label, value, onChange, type = "text", ...props }) => (
-  <Box sx={{ mb: 2 }}>
-    <Typography sx={{ mb: 0.5, fontWeight: 400, color: "#283593" }}>{label}</Typography>
-    <TextField
-      type={type}
-      value={value}
-      onChange={onChange}
-      fullWidth
-      {...props}
-      sx={{
-        "& .MuiOutlinedInput-root": {
-          borderRadius: 2,
-          "& fieldset": { borderColor: "#d1d9ff" },
-          "&:hover fieldset": { borderColor: "#9fa8da" },
-          "&.Mui-focused fieldset": { borderColor: "#3f51b5" },
-        },
-      }}
-      inputProps={{ dir: "rtl", style: { textAlign: "right" } }}
-    />
-  </Box>
-);
+import LabeledField from "../common/LabeledField";
+import { COLORS } from "../../theme/colors";
+import { useExamForm } from "../../hooks/useExamForm";
+import QuestionTypeSelector from "./QuestionTypeSelector";
+import CreatedExamSummary from "./CreatedExamSummary";
+import GuestWarningBanner from "./GuestWarningBanner";
 
 export default function CreateExamManual() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [form, setForm] = useState({
+
+  const initialForm = {
     title: "",
     subject: "",
     classroom: "",
     topic: "",
-  });
-  const [guestWarning, setGuestWarning] = useState(false);
+  };
+
+  const {
+    form,
+    loading,
+    setLoading,
+    message,
+    setMessage,
+    guestWarning,
+    setGuestWarning,
+    handleChange,
+    resetForm,
+  } = useExamForm(initialForm);
   const [examId, setExamId] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  // change field value
-  const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
-
-  // reset form
-  const resetForm = () => {
-    setForm({
-      title: "מבחן",
-      subject: "",
-      classroom: "",
-      topic: "",
-    });
-    setMessage(null);
+  const handleResetForm = () => {
+    resetForm(initialForm);
     setExamId(null);
   };
   // create exam
@@ -88,6 +65,15 @@ export default function CreateExamManual() {
       };
 
       const res = await createExamManualService(payload);
+      if (res.isError) {
+        if (res.status === 500) {
+          setMessage({ type: "error", text: `❌ שגיאה בשרת: ${res.message || "נסי שוב מאוחר יותר"}` });
+        } else {
+          setMessage({ type: "error", text: `❌ ${res.message || "שגיאה לא צפויה ביצירת המבחן"}` });
+        }
+        return;
+      }
+
       setExamId(res.data._id);
       setMessage({ type: "success", text: "✅ מבחן נוצר! עכשיו ניתן להוסיף שאלות ידנית." });
     } catch (err) {
@@ -109,7 +95,7 @@ export default function CreateExamManual() {
         alignItems: "center",
         py: 6,
         minHeight: "100vh",
-        background: LIGHT_BG,
+        background: COLORS.lightBg,
         direction: "rtl",
       }}
     >
@@ -119,9 +105,9 @@ export default function CreateExamManual() {
           maxWidth: 540,
           borderRadius: 5,
           p: 3,
-          backgroundColor: "#ffffffcc",
-          boxShadow: "0 8px 32px rgba(31, 38, 135, 0.12)",
-          border: "1.5px solid #e3e8ff",
+          backgroundColor: COLORS.whiteSoft,
+          boxShadow: `0 8px 32px ${COLORS.shadowBlue}`,
+          border: `1.5px solid ${COLORS.borderSoft}`,
         }}
       >
         <CardContent>
@@ -130,15 +116,15 @@ export default function CreateExamManual() {
             align="center"
             sx={{
               mb: 3,
-              color: "#283593",
+              color: COLORS.textPrimary,
               letterSpacing: 1,
-              textShadow: "0 2px 8px #e3e8ff",
+              textShadow: `0 2px 8px ${COLORS.borderSoft}`,
             }}
           >
             יצירת מבחן ידני
           </Typography>
 
-          {/* טופס יצירת מבחן */}
+          {/* Form fields */}
           <LabeledField
             label="מקצוע"
             value={form.subject}
@@ -173,23 +159,14 @@ export default function CreateExamManual() {
             >
               {loading ? <CircularProgress size={20} /> : "צור מבחן ידני"}
             </Button>
-            <Button variant="text" fullWidth onClick={resetForm}>
+            <Button variant="text" fullWidth onClick={handleResetForm}>
               איפוס
             </Button>
           </Stack>
-        {/* Guest warning */}
-          {guestWarning && (
-            <Box sx={{
-              mt: 2, p: 1.5, bgcolor: "#fff3e0", borderRadius: 2,
-              border: "1px solid #FFB300", display: "flex",
-              justifyContent: "space-between", alignItems: "center",
-            }}>
-              <span>עליך להתחבר כדי ליצור מבחן</span>
-              <Button size="small" variant="outlined" color="warning" onClick={() => navigate("/login")}>
-                התחברות
-              </Button>
-            </Box>
-          )}
+
+          {/* Guest warning */}
+          {guestWarning && <GuestWarningBanner onLogin={() => navigate("/login")} />}
+
           {message && (
             <Alert severity={message.type} sx={{ mt: 1, fontSize: "1.05rem" }}>
               {message.text}

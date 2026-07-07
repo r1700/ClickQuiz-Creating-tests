@@ -22,13 +22,9 @@ import { AutoAwesome, Create, Share, LibraryBooks, ArrowBackIos, ArrowForwardIos
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { AuthContext } from "../context/AuthContext";
+import { COLORS } from "../theme/colors";
 
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
 
 // Animations
 const fadeIn = keyframes`
@@ -43,8 +39,8 @@ const pulse = keyframes`
 
 // Hero Section
 const Hero = styled(Box)({
-    background: `linear-gradient(120deg, ${PRIMARY_COLOR} 0%, ${SECONDARY_COLOR} 60%)`,
-    color: "#fff",
+    background: `linear-gradient(120deg, ${COLORS.primary} 0%, ${COLORS.secondary} 60%)`,
+    color: COLORS.white,
     padding: "64px 20px",
     borderRadius: 12,
     marginTop: 16,
@@ -60,7 +56,7 @@ const FloatingShape = styled(Box)(({ top, left, size, opacity }) => ({
     width: size,
     height: size,
     borderRadius: "50%",
-    backgroundColor: "#fff",
+    backgroundColor: COLORS.white,
     opacity,
     filter: "blur(50px)",
     animation: "float 6s ease-in-out infinite",
@@ -73,32 +69,32 @@ const FloatingShape = styled(Box)(({ top, left, size, opacity }) => ({
 // GlassCard
 const GlassCard = styled(Card)({
     backdropFilter: "blur(6px)",
-    background: "linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.72))",
+    background: `linear-gradient(180deg, ${COLORS.whiteSoft}, rgba(255,255,255,0.72))`,
     borderRadius: 14,
-    boxShadow: "0 8px 24px rgba(10,20,30,0.06)",
+    boxShadow: `0 8px 24px ${COLORS.shadowSoft}`,
 });
 
 // Feature Icon
 const FeatureIcon = styled(Avatar)({
     width: 56,
     height: 56,
-    background: "rgba(255,255,255,0.14)",
+    background: `${COLORS.whiteSoft}`,
     color: "white",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
+    boxShadow: `0 6px 18px ${COLORS.shadowCard}`,
 });
 
 // CTA Button
 const CTA = styled(Button)({
-    background: `linear-gradient(90deg, ${ACCENT_COLOR}, #FF9A00)`,
-    color: "#07122b",
+    background: `linear-gradient(90deg, ${COLORS.accent}, ${COLORS.warningOrange})`,
+    color: COLORS.textDark,
     padding: "12px 28px",
     borderRadius: 12,
     fontWeight: 700,
     animation: `${pulse} 2s infinite`,
-    "&:hover": { background: "#FFA000" },
+    "&:hover": { background: COLORS.warningOrange },
 });
 
 // Feature Card Component
@@ -113,11 +109,11 @@ const FeatureCard = ({ icon, title, text }) => (
             height:  200 , 
             width: 200 ,
             transition: "0.3s",
-            "&:hover": { transform: "translateY(-10px)", boxShadow: "0 20px 40px rgba(0,0,0,0.15)" },
+            "&:hover": { transform: "translateY(-10px)", boxShadow: `0 20px 40px ${COLORS.shadowCard}` },
         }}
     >
         <Box display="flex" alignItems="center" gap={2} mb={2}>
-            <FeatureIcon sx={{ bgcolor: "rgba(24, 74, 191, 0.14)" }}>{icon}</FeatureIcon>
+            <FeatureIcon sx={{ bgcolor: `${COLORS.primary}14` }}>{icon}</FeatureIcon>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
                 {title}
             </Typography>
@@ -163,7 +159,7 @@ const HomePageAnimatedStyled = () => {
  
 
     return (
-        <Box sx={{ direction: "rtl", background: LIGHT_BG, minHeight: "100vh", pb: 8, marginTop: 0 }}>
+        <Box sx={{ direction: "rtl", background: COLORS.lightBg, minHeight: "100vh", pb: 8, marginTop: 0 }}>
             {/* <Button sx={{ mt: 2, ml: 2 }} onClick={() => funcClearCookies()}>נקה עוגיות</Button> */}
             {/* Hero */}
             <Container maxWidth="lg">
@@ -183,8 +179,8 @@ const HomePageAnimatedStyled = () => {
                             sx={{
                                 borderRadius: 4,
                                 fontWeight: 700,
-                                color: ACCENT_COLOR,
-                                borderColor: ACCENT_COLOR
+                                color: COLORS.accent,
+                                borderColor: COLORS.accent
                             }}
                             onClick={() => { navigate("/get-my-exams") }}>המבחנים שלי</Button>}
                     </Box>
@@ -212,15 +208,15 @@ const HomePageAnimatedStyled = () => {
                         px: 3,
                         textAlign: "center",
                         // backgroundColor: "white",
-                        borderTop: `4px solid ${PRIMARY_COLOR}`,
-                        borderBottom: `4px solid ${PRIMARY_COLOR}`,
+                        borderTop: `4px solid ${COLORS.primary}`,
+                        borderBottom: `4px solid ${COLORS.primary}`,
                         // boxShadow: "0 8px 24px rgba(0,0,0,0.05)",
                     }}
                 >
 
                     <Typography
                         variant="h4"
-                        sx={{ fontWeight: 800, mb: 3, color: PRIMARY_COLOR }}
+                        sx={{ fontWeight: 800, mb: 3, color: COLORS.primary }}
                     >
                         אודות ClickQuiz
                     </Typography>
@@ -261,7 +257,7 @@ const HomePageAnimatedStyled = () => {
                     <Typography variant="h4" align="center" gutterBottom sx={{ mb: 3 }}>מה מורות אומרות</Typography>
                     <Box sx={{ maxWidth: 500, mx: "auto", position: "relative" }}>
                         <GlassCard sx={{ p: 3, textAlign: "center", mb: 2, animation: `${fadeIn} 1s ease-out` }}>
-                            <Avatar sx={{ bgcolor: SECONDARY_COLOR, mb: 1 }}>{testimonials[current].name[0]}</Avatar>
+                            <Avatar sx={{ bgcolor: COLORS.secondary, mb: 1 }}>{testimonials[current].name[0]}</Avatar>
                             <Typography variant="body1" sx={{ fontWeight: 700 }}>{testimonials[current].name}</Typography>
                             <Typography variant="body2" color="text.secondary">{testimonials[current].text}</Typography>
                         </GlassCard>

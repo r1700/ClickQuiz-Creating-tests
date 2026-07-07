@@ -12,11 +12,9 @@ import { Tooltip } from "@mui/material";
 import PrintIcon from "@mui/icons-material/Print";
 import { useReactToPrint } from "react-to-print";
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
+import { COLORS } from "../../theme/colors";
+
+
 
 const ExportExam = () => {
   const navigate = useNavigate();
@@ -39,7 +37,9 @@ const ExportExam = () => {
     const fetchExam = async () => {
       try {
         const res = await getExamService(id);
-        setExam(res.data);
+        if (!res.isError) {
+          setExam(res.data);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -64,7 +64,7 @@ const ExportExam = () => {
   };
 
   return (
-    <Box sx={{ bgcolor: LIGHT_BG }}>
+    <Box sx={{ bgcolor: COLORS.lightBg }}>
       <Box sx={{ maxWidth: "900px", margin: "0 auto", padding: { xs: 1, md: 3 }, direction: "rtl" }}>
         <Button variant="text" onClick={() => navigate(-1)}> → </Button>
 

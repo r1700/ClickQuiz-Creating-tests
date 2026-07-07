@@ -12,12 +12,9 @@ import {
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetPassword } from "../../services/authService";
+import { COLORS } from "../../theme/colors";
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#3B6B7F";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
+
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -44,11 +41,14 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      await resetPassword(token, password);
+      const res = await resetPassword(token, password);
+      if (res.isError) {
+        throw new Error(res.message || "שגיאה באיפוס הסיסמה");
+      }
       setSuccess("הסיסמה אופסה בהצלחה! מועברת לעמוד ההתחברות...");
       setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
-      setError(err.response?.data?.message || "שגיאה באיפוס הסיסמה");
+      setError(err.message || "שגיאה באיפוס הסיסמה");
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export default function ResetPassword() {
     <Box
       sx={{
         minHeight: "100vh",
-        bgcolor: LIGHT_BG,
+        bgcolor: COLORS.lightBg,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

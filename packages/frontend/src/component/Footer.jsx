@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Button, Container, Typography } from "@mui/material";
+import { COLORS } from "../theme/colors";
 
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#14B0FF";
+const PRIMARY_COLOR = COLORS.primary;
+const SECONDARY_COLOR = COLORS.secondary;
 
 export default function Footer() {
     return (

@@ -19,7 +19,7 @@ import usePageTitle from './hooks/usePageTitle';
 import Footer from './component/Footer';
 import { Box } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { COLORS } from './theme/colors';
 
 function PrivateRoute({ children }) {
   const { user, isLoggedIn, loading } = React.useContext(AuthContext);
@@ -38,7 +38,7 @@ function App() {
           {/* <Sidebar /> */}
           <PageTitleHandler />
 
-          <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: "#F6F9FB", pt: "120px" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh", bgcolor: COLORS.lightBg, pt: "120px" }}>
             <NavBar />
 
             <Box sx={{ flex: 1,px: 2  }}>

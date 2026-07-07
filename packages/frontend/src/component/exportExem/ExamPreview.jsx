@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import { Box, Typography } from "@mui/material";
+import { COLORS } from "../../theme/colors";
 
 const ExamPreview = forwardRef(({ exam, view }, ref) => {
   if (!exam) return null;
@@ -12,8 +13,8 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
       minHeight: { xs: "auto", print: "297mm" },
       margin: "0 auto",
       padding: { xs: "10mm 8mm", print: "20mm 15mm" },
-      backgroundColor: "#fff",
-      color: "#000",
+      backgroundColor: COLORS.white,
+      color: COLORS.black,
       boxSizing: "border-box",
       boxShadow: 3,
     }}>
@@ -31,7 +32,7 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
         )}
       </Box>
 
-      <hr style={{ border: "2px solid #aaa", marginBottom: "15px" }} />
+      <hr style={{ border: `2px solid ${COLORS.borderMuted}`, marginBottom: "15px" }} />
 
       <Box sx={{ mt: 2, fontSize: "14px", lineHeight: 1.8 }}>
         {exam.questions?.map((q, i) => (
@@ -55,7 +56,7 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
                 <Box sx={{ mt: 1 }}>
                   {[1, 2].map((line) => (
                     <Box key={line} sx={{
-                      borderBottom: "1px solid #000",
+                      borderBottom: `1px solid ${COLORS.black}`,
                       width: "100%",
                       mb: 1,
                       height: "20px",
@@ -66,7 +67,7 @@ const ExamPreview = forwardRef(({ exam, view }, ref) => {
                 <Typography sx={{ color: "green" }}>תשובה: {q.answer || "לא הוזן"}</Typography>
               )
             )}
-            <hr style={{ border: "1px dashed #ddd", marginTop: "10px" }} />
+            <hr style={{ border: `1px dashed ${COLORS.borderDashed}`, marginTop: "10px" }} />
           </Box>
         ))}
       </Box>

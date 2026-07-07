@@ -5,12 +5,9 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { sendPasswordReset } from "../../services/authService"; // נניח שקיים endpoint כזה
+import { COLORS } from "../../theme/colors";
 
-// צבעים
-const PRIMARY_COLOR = "#002275";
-const SECONDARY_COLOR = "#3B6B7F";
-const ACCENT_COLOR = "#FFB300";
-const LIGHT_BG = "#F6F9FB";
+
 
 export default function ForgetPassword() {
     const navigate = useNavigate();
@@ -27,10 +24,13 @@ export default function ForgetPassword() {
         setLoading(true);
 
         try {
-            await sendPasswordReset(email);
+            const res = await sendPasswordReset(email);
+            if (res.isError) {
+                throw new Error(res.message || "שגיאה בשליחת האימייל");
+            }
             setSuccess("נשלח אלייך מייל לאיפוס סיסמה!");
         } catch (e) {
-            setError(e.response?.data?.message || "שגיאה בשליחת האימייל");
+            setError(e.message || "שגיאה בשליחת האימייל");
         } finally {
             setLoading(false);
         }
@@ -40,7 +40,7 @@ export default function ForgetPassword() {
         <Box
             sx={{
                 minHeight: "100vh",
-                bgcolor: LIGHT_BG,
+                bgcolor: COLORS.lightBg,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",

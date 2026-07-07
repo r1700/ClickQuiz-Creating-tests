@@ -1,84 +1,48 @@
 // packages/frontend/src/services/Exam.services.js
-import axios from "axios";
+import { request } from "./apiClient";
 
-const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001/api"; // כתובת השרת
-
-// create exam using AI
 export const createExamAIService = async (payload) => {
-    try {
-        const res = await axios.post(`${BASE_URL}/exams/create-ai`, payload, {
-            timeout: 120000,
-            withCredentials: true,
-        });
-        return {
-            status: res.status,
-            data: res.data,
-            isError: false,
-        };
-    } catch (error) {
-        return {
-            status: error.response?.status || 500,
-            data: error.response?.data,
-            message: error.response?.data?.error || error.response?.data?.message || error.message,
-            isError: true,
-        };
-    }
-}
-
-// create exam manually
-export const createExamManualService = async (payload) => {
-    try {
-        const res = await axios.post(`${BASE_URL}/exams/create`, payload, { 
-            withCredentials: true
-         });
-        return res;
-    }
-    catch (error) {
-        return error.res.status;
-    }
-}
-
-// get exam by ID
-export const getExamService = async (id) => {
-    try {
-        const res = await axios.get(`${BASE_URL}/exams/get-exams/${id}`,{ 
-            withCredentials: true
-         })
-        return res;
-    }
-    catch (error) {
-        return error.res.status;
-    }
-}
-
-// eddit existing exam
-export const updateExamService = (examId, updatedData) => {
-  return axios.put(`${BASE_URL}/exams/update/${examId}`, updatedData, {
-    withCredentials: true
+  return request({
+    method: "post",
+    url: "/exams/create-ai",
+    data: payload,
+    timeout: 120000,
   });
 };
 
-// get all exams for the logged-in user
-export const getExamsServiceByUser = async () => {
-  try {
-    const res = await axios.get(`${BASE_URL}/exams/get-my-exams`, {
-      withCredentials: true
-    });
-    
-    return res;
-  } catch (error) {
-    return error.response?.status;
-  }
+export const createExamManualService = async (payload) => {
+  return request({
+    method: "post",
+    url: "/exams/create",
+    data: payload,
+  });
 };
 
-// delete exam by ID
+export const getExamService = async (id) => {
+  return request({
+    method: "get",
+    url: `/exams/get-exams/${id}`,
+  });
+};
+
+export const updateExamService = async (examId, updatedData) => {
+  return request({
+    method: "put",
+    url: `/exams/update/${examId}`,
+    data: updatedData,
+  });
+};
+
+export const getExamsServiceByUser = async () => {
+  return request({
+    method: "get",
+    url: "/exams/get-my-exams",
+  });
+};
+
 export const deleteExamService = async (examId) => {
-  try {
-    const res = await axios.delete(`${BASE_URL}/exams/delete/${examId}`, {
-      withCredentials: true
-    });
-    return res;
-  } catch (error) {
-    return error.response?.status;
-  }
+  return request({
+    method: "delete",
+    url: `/exams/delete/${examId}`,
+  });
 };
