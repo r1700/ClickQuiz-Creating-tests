@@ -32,7 +32,7 @@ const ShareDialog = ({ open, onClose, exam, studentRef, teacherRef, setSnackbar 
         const formData = new FormData();
         formData.append("file", pdfBlob, `${exam.title}_${modeName}.pdf`);
         const res = await uploadPdf(formData);
-        const safeFilename = encodeURIComponent(res.id);
+        const safeFilename = encodeURIComponent(res.data.id);
         return `${BASE_URL}/pdf/pdf/${safeFilename}`;
     };
 
