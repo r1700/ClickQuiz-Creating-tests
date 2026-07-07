@@ -2,6 +2,8 @@
 
 **An interactive web application that allows teachers to quickly create, manage, and share exams, with a strong focus on using AI for automatic question generation.**
 
+🔗 **Live Demo:** [ClickQuize](https://click-quiz.vercel.app/)
+
 ---
 
 ## 🌟 About the Project
@@ -60,7 +62,7 @@ The system allows a mix of **manual questions** and **AI-generated questions**, 
 - **Frontend:** React, Material-UI  
 - **Backend:** Node.js, Express  
 - **Database:** MongoDB  
-- **AI:** OpenAI API  
+- **AI:** OpenAI API & Google Gemini API
 
 ---
 
